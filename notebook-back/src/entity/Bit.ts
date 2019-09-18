@@ -7,32 +7,32 @@ export class Bit {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ default: '' })
-    keyword: string;
+    @Column({ default: 0 })
+    sort: number;
 
-    @Column({ default: null })
+    @Column({ default: '' })
+    title: string;
+
+    @Column({ default: 0 })
     attr: number;
+
+    @Column({ default: '' })
+    audio: string;
+
+    @Column({ default: '' })
+    video: string;
+
+    @Column({ default: '' })
+    description: string;
 
     @Column('text')
     content: string;
 
     @Column({ default: '' })
-    media: string;
-
-    @Column({ default: null })
-    level: number;
-
-    @Column({ default: 0 })
-    sort: number;
-
-    @Column({ default: null })
-    relateBit: number;
-
-    @Column({ default: null })
-    relatePoint: number;
+    extend: string;
 
     @Column({ default: '' })
-    extend: string;
+    config: string;
 
     @CreateDateColumn()
     createdAt: string

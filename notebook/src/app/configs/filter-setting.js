@@ -1,3 +1,16 @@
+export const AttrOpts = [
+    { label: '全部', value: 0 },
+    { label: '标记', value: 1 },
+    { label: '高亮', value: 2 },
+    { label: '难点', value: 3 },
+    { label: '未懂', value: 4 },
+    { label: '常记', value: 5 },
+    { label: '已熟悉，有空看看', value: 6 },
+    { label: '少用，再处理', value: 7 },
+    { label: '垃圾桶', value: 8 },
+    { label: '空', value: 9 }
+];
+
 export const dropdownOpts = {
     Fields: [
         { label: '正文', value: 'content' }
@@ -6,19 +19,7 @@ export const dropdownOpts = {
         { label: '正文', value: 'content' }
     ],
     FieldsPoint: [
-        { label: '标题', value: 'title' },
-    ],
-    Attrs: [
-        { label: '全部', value: 0 },
-        { label: '标记', value: 1 },
-        { label: '高亮', value: 2 },
-        { label: '难点', value: 3 },
-        { label: '未懂', value: 4 },
-        { label: '常记', value: 5 },
-        { label: '已熟悉，有空看看', value: 6 },
-        { label: '少用，再处理', value: 7 },
-        { label: '垃圾桶', value: 8 },
-        { label: '空', value: 9 }
+        { label: '标题', value: 'title' }
     ],
     SortFields: [
         { label: '按标题', value: 'title' },

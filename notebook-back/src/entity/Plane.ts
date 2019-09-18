@@ -7,14 +7,14 @@ export class Plane {
     @PrimaryGeneratedColumn()
     id: number;
 
-    // @Column()
-    // sid: number;
-
     @Column({ default: 0 })
     sort: number;
 
-    @Column({ length: 100 })
+    @Column()
     title: string;
+
+    @Column({ default: 1 }) // 1:技术，2:生活
+    solid: number;
 
     @CreateDateColumn()
     createdAt: string

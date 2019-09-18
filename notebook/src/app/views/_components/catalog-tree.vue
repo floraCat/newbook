@@ -4,7 +4,7 @@
 </docs>
 
 <template>
-    <div class="dropdown-tree">
+    <div class="catalog-tree">
         <el-popover
             ref="popover"
             placement="bottom"
@@ -26,7 +26,7 @@
 </template>
 <script>
 export default {
-    name: 'dropdown-tree',
+    name: 'catalog-tree',
     props: [ 'dimension' ],
     data() {
         return {

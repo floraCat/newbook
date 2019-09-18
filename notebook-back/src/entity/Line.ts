@@ -8,14 +8,11 @@ export class Line {
     @PrimaryGeneratedColumn()
     id: number;
 
-    // @Column()
-    // sid: number;
-
-    @Column({ length: 100 })
-    title: string;
-
     @Column({ default: 0 })
     sort: number;
+
+    @Column()
+    title: string;
 
     @Column({ default: '' })
     description: string;
@@ -28,9 +25,6 @@ export class Line {
 
     @UpdateDateColumn()
     updatedAt: string
-
-    // @Column()
-    // planeId: number;
 
     @ManyToOne(type => Plane, plane => plane.lines)
     plane: Plane;

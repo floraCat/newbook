@@ -8,29 +8,29 @@ export class Point {
     @PrimaryGeneratedColumn()
     id: number;
 
-    // @Column()
-    // sid: number;
+    @Column({ default: 0 })
+    sort: number;
 
     @Column()
     title: string;
 
+    @Column({ default: 0 })
+    attr: number;
+
     @Column({ default: '' })
     description: string;
 
-    @Column({ default: 0 })
-    sort: number;
-
     @Column('text')
     extend: string;
+
+    @Column({ default: '' })
+    config: string;
 
     @CreateDateColumn()
     createdAt: string
 
     @UpdateDateColumn()
     updatedAt: string
-
-    // @Column()
-    // lineId: number;
 
     @ManyToOne(type => Line, line => line.points)
     line: Line;

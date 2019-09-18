@@ -19,24 +19,25 @@ import {Point} from "../entity/Point";
 /* -------------------------------------- */
 
  // excel表的存放地址
-let _path = 'D:/_phpStudy/WWW/_project/_my/newbook/_material/_sheets/';
+let _path = 'E:/_fang/_me/newbook/_material/_sheets/';
 
 let plane_oldIds = [], line_oldIds = [];
 
 // plane 字典
 let dictionary_plane = [
     { new: 'id', old: 'id', index: null},
-    { new: 'title', old: 'ttl', index: null},
     { new: 'sort', old: null, def: 0, index: null },
+    { new: 'title', old: 'ttl', index: null},
     { new: 'createdAt', old: 'input_time', index: null },
-    { new: 'updatedAt', old: 'update_time', index: null }
+    { new: 'updatedAt', old: 'update_time', index: null },
+    { new: 'solid', old: null, def: 1, index: null }
 ];
 
 // line 字典
 let dictionary_line = [
     { new: 'id', old: 'id', index: null},
-    { new: 'title', old: 'ttl', index: null},
     { new: 'sort', old: null, def: 0, index: null },
+    { new: 'title', old: 'ttl', index: null},
     { new: 'description', old: 'description', index: null },
     { new: 'extend', old: 'content', index: null },
     { new: 'createdAt', old: 'input_time', index: null },
@@ -46,10 +47,12 @@ let dictionary_line = [
 
 // point 字典
 let dictionary_point = [
-    { new: 'title', old: 'ttl', index: null},
     { new: 'sort', old: null, def: 0, index: null },
+    { new: 'title', old: 'ttl', index: null},
+    { new: 'attr', old: null, def: 0, index: null },
     { new: 'description', old: 'description', index: null },
     { new: 'extend', old: 'content', index: null },
+    { new: 'config', old: null, def: '', index: null },
     { new: 'createdAt', old: 'input_time', index: null },
     { new: 'updatedAt', old: 'update_time', index: null },
     { new: 'line', old: 'topic_id', index: null }

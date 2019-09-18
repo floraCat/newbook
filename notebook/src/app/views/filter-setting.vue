@@ -27,11 +27,11 @@
         <!--分类-->
         <section class="nb-search-dropdown pl pr">
             <label class="label">分类：</label>
-            <dropdown-tree
+            <catalog-tree
                 :dimension="searchOpts.dimension"
-                @update="getsearchCats">
+                @confirm="getsearchCats">
                 <el-input size="mini" slot="reference" v-model="catsShowTxt" placeholder="选择分类"></el-input>
-            </dropdown-tree>
+            </catalog-tree>
             <el-checkbox class="exclude" v-model="exclude">排除</el-checkbox>
         </section>
         <!--属性-->
@@ -39,7 +39,7 @@
             <label class="label">属性：</label>
             <el-select size="mini" v-model="searchOpts.attrs" multiple collapse-tags placeholder="选择属性(多选)">
                 <el-option
-                        v-for="item in dropdownOpts.Attrs"
+                        v-for="item in AttrOpts"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value">
@@ -86,13 +86,13 @@
 </template>
 
 <script>
-import { dropdownOpts } from '@configs/filter-setting';
-import DropdownTree from './_components/dropdown-tree';
+import { AttrOpts, dropdownOpts } from '@configs/filter-setting';
+import CatalogTree from './_components/catalog-tree';
 
     export default {
         name: 'nb-filter-setting',
         components: {
-            DropdownTree
+            CatalogTree
         },
         data() {
             return {

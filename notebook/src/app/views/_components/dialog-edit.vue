@@ -4,9 +4,13 @@
         :visible.sync="dialogVisible"
         width="600px">
         <el-form :model="editRow" label-width="100px">
-            <el-form-item v-for="(field, index) in fields" :key="index" :label="field.label">
-                <el-input v-model="editRow[field.key]"></el-input>
-            </el-form-item>
+            <form-ctrl-edit v-for="(field, index) in fieldConfig"
+                :key="index"
+                :fieldConfig="field"
+                :data="editRow"
+                :action="action"
+                :dataKey="dataKey"
+            ></form-ctrl-edit>
         </el-form>
         <span slot="footer" class="dialog-footer">
             <el-button @click="close">取 消</el-button>
@@ -17,18 +21,21 @@
 
 <script>
 import {
-    PlaneFields, LineFields, PointFields, BitFields,
+    PlaneFieldConfig, LineFieldConfig, PointFieldConfig, BitFieldConfig,
     RowDefaultPlane, RowDefaultLine, RowDefaultPoint, RowDefaultBit
 } from './_config';
+import FormCtrlEdit from './form-ctrl-edit';
 export default {
     name: 'edit-plane',
     props: [ 'visible', 'action', 'data', 'dataKey' ],
+    components: {
+        FormCtrlEdit
+    },
     data() {
         return {
-            planeFields: PlaneFields,
             editRow: {},
             rowDefault: {},
-            fields: []
+            fieldConfig: []
         };
     },
     computed: {
@@ -51,26 +58,25 @@ export default {
             } else {
                 this.editRow = _.cloneDeep(this.rowDefault);
             }
-            // this.editRow.point = parseInt(this.$route.query.pid);
         },
         // 获取新增默认值
         getRowDefalut () {
             switch (this.dataKey) {
             case 'plane':
                 this.rowDefault = RowDefaultPlane;
-                this.fields = PlaneFields;
+                this.fieldConfig = PlaneFieldConfig;
                 break;
             case 'line':
                 this.rowDefault = RowDefaultLine;
-                this.fields = LineFields;
+                this.fieldConfig = LineFieldConfig;
                 break;
             case 'point':
                 this.rowDefault = RowDefaultPoint;
-                this.fields = PointFields;
+                this.fieldConfig = PointFieldConfig;
                 break;
             case 'bit':
                 this.rowDefault = RowDefaultBit;
-                this.fields = BitFields;
+                this.fieldConfig = BitFieldConfig;
                 break;
             }
         },
@@ -78,7 +84,6 @@ export default {
             this.$emit('close');
         },
         confirm () {
-            console.log(22222222, this.editRow);
             this.$emit('confirm', this.editRow);
             this.close();
         }
