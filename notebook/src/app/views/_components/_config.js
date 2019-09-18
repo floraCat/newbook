@@ -35,6 +35,7 @@ export const PointFieldConfig = [
     { key: 'sort', label: '排序', formCtrl: { type: 'text' } },
     { key: 'attr', label: '属性', formCtrl: { type: 'select', opts: AttrOpts } },
     { key: 'description', label: '描述', formCtrl: { type: 'text' } },
+    { key: 'extend', label: '拓展', formCtrl: { type: 'editor' } },
     { key: 'id',
         label: '所属line',
         formCtrl: {
@@ -49,7 +50,7 @@ export const BitFieldConfig = [
     { key: 'attr', label: '属性', formCtrl: { type: 'select', opts: AttrOpts } },
     { key: 'audio', label: '音频', formCtrl: { type: 'file' } },
     { key: 'video', label: '视频', formCtrl: { type: 'file' } },
-    { key: 'content', label: '正文', formCtrl: { type: 'textarea' } },
+    { key: 'content', label: '正文', formCtrl: { type: 'editor' } },
     { key: 'id',
         label: '所属point',
         formCtrl: {
@@ -100,3 +101,15 @@ export const RowDefaultBit = {
 };
 
 /* ------- 新增时默认字段值 end ------- */
+
+// bit 字段配置 默认值
+export const FieldConfigDefault = [
+    { key: 'title', isAble: true, isShow: true },
+    { key: 'sort', isAble: true, isShow: true },
+    { key: 'attr', isAble: true, isShow: true },
+    { key: 'audio', isAble: false, isShow: false },
+    { key: 'video', isAble: false, isShow: false },
+    { key: 'description', isAble: true, isShow: true },
+    { key: 'content', isAble: true, isShow: true },
+    { key: 'extend', isAble: false, isShow: false }
+];

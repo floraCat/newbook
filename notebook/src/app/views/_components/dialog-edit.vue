@@ -2,7 +2,7 @@
     <el-dialog
         :title="title"
         :visible.sync="dialogVisible"
-        width="600px">
+        width="800px">
         <el-form :model="editRow" label-width="100px">
             <form-ctrl-edit v-for="(field, index) in fieldConfig"
                 :key="index"
@@ -16,6 +16,13 @@
             <el-button @click="close">取 消</el-button>
             <el-button type="primary" @click="confirm">确 定</el-button>
         </span>
+        <el-button size="small" class="btn-field-config" @click="fieldConfigVisible = true">字段配置</el-button>
+        <field-config
+            v-if="fieldConfigVisible"
+            :config="editRow.config"
+            @close="fieldConfigVisible = false"
+            @confirm="fieldConfigConfirm">
+        </field-config>
     </el-dialog>
 </template>
 
@@ -25,17 +32,20 @@ import {
     RowDefaultPlane, RowDefaultLine, RowDefaultPoint, RowDefaultBit
 } from './_config';
 import FormCtrlEdit from './form-ctrl-edit';
+import FieldConfig from './field-config.vue';
 export default {
     name: 'edit-plane',
     props: [ 'visible', 'action', 'data', 'dataKey' ],
     components: {
-        FormCtrlEdit
+        FormCtrlEdit,
+        FieldConfig
     },
-    data() {
+    data () {
         return {
             editRow: {},
             rowDefault: {},
-            fieldConfig: []
+            fieldConfig: [],
+            fieldConfigVisible: false
         };
     },
     computed: {
@@ -80,6 +90,10 @@ export default {
                 break;
             }
         },
+        // 字段配置完后回调
+        fieldConfigConfirm (returnData) {
+            this.editRow.config = JSON.stringify(returnData);
+        },
         close () {
             this.$emit('close');
         },
@@ -90,3 +104,11 @@ export default {
     }
 };
 </script>
+
+<style lang="scss">
+.btn-field-config {
+    position: absolute;
+    top: 18px;
+    right: 45px;
+}
+</style>

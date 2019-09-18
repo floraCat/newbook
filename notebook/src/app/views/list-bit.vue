@@ -11,7 +11,7 @@
         <dd>
           <template v-for="(bit, index2) in rowData.bits">
               <section :key="index2">
-                <div v-html="bit.content"></div>
+                <div v-html="bit.title"></div>
                 <el-button size="mini" @click="listMod(index2)">编辑</el-button>
                 <el-button size="mini" @click="listDel(index2)">删除</el-button>
               </section>

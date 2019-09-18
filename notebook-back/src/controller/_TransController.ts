@@ -19,7 +19,7 @@ import {Point} from "../entity/Point";
 /* -------------------------------------- */
 
  // excel表的存放地址
-let _path = 'E:/_fang/_me/newbook/_material/_sheets/';
+let _path = 'D:/_phpStudy/WWW/_project/_my/newbook/_material/_sheets/';
 
 let plane_oldIds = [], line_oldIds = [];
 
@@ -162,10 +162,14 @@ export class TransController {
     async trans_point () {
         let rs_point = this.transFun('point');
         
-        rs_point.map(x => {
+        rs_point.map((x, i) => {
             let index = line_oldIds.findIndex(y => y === x.line);
             if (index > -1) {
                 x.line = index + 1;
+            } else {
+                // 没有对应lineId的赋值最新的lineId
+                console.log('-----------', i, x.title);
+                x.line = 172;
             }
         });
         

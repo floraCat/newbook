@@ -35,3 +35,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+#editor .fr-wrapper {
+    max-height: 300px;
+    overflow-y: scroll;
+}
+</style>

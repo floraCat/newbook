@@ -50,10 +50,18 @@
                 <el-input slot="reference" v-model="data.id" placeholder="点击选择分类" />
             </catalog-tree>
         </template>
+        <!--editor-->
+        <template v-if="type === 'editor'">
+            <!--富文本编辑器-->
+            <div id="editor">
+                <froala id="edit" :tag="'textarea'" :config="config" v-model="data.extend"></froala>
+            </div>
+        </template>
     </el-form-item>
 </template>
 
 <script>
+import VueFroala from 'vue-froala-wysiwyg'; // 富文本编辑器
 export default {
     name: 'form-ctrl-list',
     props: [ 'fieldConfig', 'data', 'action', 'dataKey' ],
@@ -63,6 +71,15 @@ export default {
             //     selectType: 'single', // or multi
             //     lastLevel: 'plane'
             // }
+            // 富文本编辑器
+            config: {
+                toolbarButtons: ['undo', 'redo', 'clearFormatting', '|', 'bold', 'italic', 'underline','strikeThrough','|', 'fontFamily', 'fontSize', 'color', '|','paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', '-', 'insertLink', 'insertImage', 'insertVideo', 'embedly', 'insertFile', 'insertTable', '|', 'emoticons', 'specialCharacters', 'insertHR', 'selectAll', '|', 'print', 'spellChecker', 'help', '|', 'fullscreen'],//['fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily', 'fontSize', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', '-', 'insertLink', 'insertImage', 'insertVideo', 'embedly', 'insertFile', 'insertTable', '|', 'emoticons', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 'print', 'spellChecker', 'help', 'html', '|', 'undo', 'redo'],//显示可操作项
+                events: {
+                'froalaEditor.initialized': function () {
+                    console.log('initialized')
+                }
+                },
+            }
         };
     },
     computed: {
@@ -79,9 +96,16 @@ export default {
         },
         // 拿到分类
         getCatalog (val) {
-            console.log(6666, val);
             this.data.id = JSON.parse(val).planes[0];
         }
     }
 };
 </script>
+
+<style lang="scss">
+#editor .fr-wrapper {
+    max-height: 300px;
+    min-height: 200px;
+    overflow-y: scroll;
+}
+</style>
