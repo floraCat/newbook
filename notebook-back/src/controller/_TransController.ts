@@ -5,6 +5,8 @@
     - 访问 http://localhost:3001/trans 即能调用trans方法完成数据转移
     - 转移数据涵盖 plane/line/point 数据表
     - 执行前需要先把旧数据转到对应Plane/Line/Point的excel表中（对应外部文件toXls.js）
+
+    * 目前还存在的问题： line里有没有对应Plane的planeId，会报错
 */
 
 import {getRepository} from "typeorm";
@@ -63,10 +65,10 @@ let dictionary_point = [
 
 export class TransController {
 
-    trans() {
+    async trans() {
 
-        this.trans_plane();
-        this.trans_line();
+        await this.trans_plane();
+        await this.trans_line();
         this.trans_point();
         
         return `ok - trans`;
@@ -134,28 +136,52 @@ export class TransController {
 
     // plane 保存到库
     async trans_plane () {
-        let rs_plane = this.transFun('plane');
-        let repository = getRepository(Plane);
-        await Promise.all(rs_plane.map(async x => {
-            await repository.save(x);
-        }));
+        return new Promise(resolve => {
+            let rs_plane = this.transFun('plane');
+            let repository = getRepository(Plane);
+            function insert (i) {
+                if (i >= rs_plane.length - 1) {
+                    resolve();
+                    return;
+                }
+                repository.save(rs_plane[i]);
+                i ++;
+                setTimeout(() => { // 为了按先后顺序保存(一起保存顺序会乱)
+                    console.log('------plane-----', rs_plane[i].title);
+                    insert(i);
+                }, 200);
+            }
+            insert(0);
+        });
     }
 
     // line 处理关联字段后 保存到库
     async trans_line () {
-        let rs_line = this.transFun('line');
-        
-        rs_line.map(x => {
-            let index = plane_oldIds.findIndex(y => y === x.plane);
-            if (index > -1) {
-                x.plane = index + 1;
-            }
-        });
+        return new Promise(resolve => {
+            let rs_line = this.transFun('line');
+            
+            rs_line.map(x => {
+                let index = plane_oldIds.findIndex(y => y === x.plane);
+                if (index > -1) {
+                    x.plane = index + 1;
+                }
+            });
 
-        let repository = getRepository(Line);
-        await Promise.all(rs_line.map(async x => {
-            await repository.save(x);
-        }));
+            let repository = getRepository(Line);
+            function insert (i) {
+                if (i >= rs_line.length - 1) {
+                    resolve();
+                    return;
+                }
+                repository.save(rs_line[i]);
+                i ++;
+                setTimeout(() => { // 为了按先后顺序保存(一起保存顺序会乱)
+                    console.log('------line-----', rs_line[i].title);
+                    insert(i);
+                }, 200);
+            }
+            insert(0);
+        });
     }
 
     // point 处理关联字段后 保存到库
@@ -172,7 +198,6 @@ export class TransController {
                 x.line = 172;
             }
         });
-        
         let repository = getRepository(Point);
         await Promise.all(rs_point.map(async x => {
             await repository.save(x);

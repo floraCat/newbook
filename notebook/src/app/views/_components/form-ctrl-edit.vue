@@ -96,7 +96,8 @@ export default {
         },
         // 拿到分类
         getCatalog (val) {
-            this.data.id = JSON.parse(val).planes[0];
+            // this.$set(this.data, 'id', val);
+            this.$set(this.data, 'id', JSON.parse(val).points[0]);
         }
     }
 };

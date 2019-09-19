@@ -39,7 +39,7 @@
             <label class="label">属性：</label>
             <el-select size="mini" v-model="searchOpts.attrs" multiple collapse-tags placeholder="选择属性(多选)">
                 <el-option
-                        v-for="item in AttrOpts"
+                        v-for="item in attrOpts"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value">
@@ -87,13 +87,9 @@
 
 <script>
 import { AttrOpts, dropdownOpts } from '@configs/filter-setting';
-import CatalogTree from './_components/catalog-tree';
 
     export default {
         name: 'nb-filter-setting',
-        components: {
-            CatalogTree
-        },
         data() {
             return {
                 searchOpts: {
@@ -102,7 +98,7 @@ import CatalogTree from './_components/catalog-tree';
                     keyword: '',
                     keywordFields: ['content'],
                     cats: '',
-                    attrs: [5],
+                    attrs: [],
                     sortField: 'updatedAt',
                     sortType: 'ASC',
                     playType: 'hand',
@@ -110,7 +106,9 @@ import CatalogTree from './_components/catalog-tree';
                 },
                 dropdownOpts: _.cloneDeep(dropdownOpts),
                 catsShowTxt: '', // 分类展示文本
-                exclude: false
+                exclude: false,
+
+                attrOpts: AttrOpts
             }
         },
         watch: {

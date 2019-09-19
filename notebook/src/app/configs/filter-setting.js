@@ -1,5 +1,4 @@
 export const AttrOpts = [
-    { label: '全部', value: 0 },
     { label: '标记', value: 1 },
     { label: '高亮', value: 2 },
     { label: '难点', value: 3 },

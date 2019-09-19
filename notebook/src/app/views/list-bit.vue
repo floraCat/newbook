@@ -14,6 +14,7 @@
                 <div v-html="bit.title"></div>
                 <el-button size="mini" @click="listMod(index2)">编辑</el-button>
                 <el-button size="mini" @click="listDel(index2)">删除</el-button>
+                <el-button size="mini" @click="unbind(index2)">解绑</el-button>
               </section>
           </template>
           <hr />
@@ -86,6 +87,15 @@ export default {
             this.rowApi.row(this.$route.query.pid).then(res => {
                 this.rowData = res;
                 this.listData = res.bits;
+            });
+        },
+        // 解绑
+        unbind (index) {
+            let rs = _.cloneDeep(this.listData[index]);
+            rs.point = null;
+            this.$api.Bit.edit(rs).then(res => {
+                this.$message.success('解绑成功');
+                this.listData.splice(index, 1);
             });
         }
     }

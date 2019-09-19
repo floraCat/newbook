@@ -37,7 +37,6 @@ export class BitController {
         sql += filterKeyword ? ` AND (${filterKeyword})` : '';
         let filterCats = await this.filterCats(opts);
         sql += filterCats ? ` AND (${filterCats})` : '';
-        console.log(4444, sql);
         return sql;
     };
 
