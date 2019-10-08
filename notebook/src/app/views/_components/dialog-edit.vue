@@ -1,44 +1,49 @@
 <template>
     <el-dialog
+        class="nb-edit-dialog"
         :title="title"
-        :visible.sync="dialogVisible"
-        width="800px">
+        :visible.sync="dialogVisible">
         <el-form :model="editRow" label-width="100px">
-            <form-ctrl-edit v-for="(field, index) in fieldConfig"
+            <form-ctrl v-for="(field, index) in fieldConfig"
                 :key="index"
                 :fieldConfig="field"
                 :data="editRow"
                 :action="action"
                 :dataKey="dataKey"
-            ></form-ctrl-edit>
+            ></form-ctrl>
         </el-form>
         <span slot="footer" class="dialog-footer">
             <el-button @click="close">取 消</el-button>
             <el-button type="primary" @click="confirm">确 定</el-button>
         </span>
-        <el-button size="small" class="btn-field-config" @click="fieldConfigVisible = true">字段配置</el-button>
-        <field-config
+        <el-button size="small"
+            class="btn-field-setting"
+            v-if="dataKey === 'point' || dataKey === 'bit'"
+            @click="fieldConfigVisible = true">
+            字段配置
+        </el-button>
+        <field-setting
             v-if="fieldConfigVisible"
             :config="editRow.config"
             @close="fieldConfigVisible = false"
             @confirm="fieldConfigConfirm">
-        </field-config>
+        </field-setting>
     </el-dialog>
 </template>
 
 <script>
 import {
     PlaneFieldConfig, LineFieldConfig, PointFieldConfig, BitFieldConfig,
-    RowDefaultPlane, RowDefaultLine, RowDefaultPoint, RowDefaultBit
+    LogArticleFieldConfig
 } from './_config';
-import FormCtrlEdit from './form-ctrl-edit';
-import FieldConfig from './field-config.vue';
+import FormCtrl from './form-ctrl';
+import FieldSetting from './field-setting.vue';
 export default {
     name: 'edit-plane',
     props: [ 'visible', 'action', 'data', 'dataKey' ],
     components: {
-        FormCtrlEdit,
-        FieldConfig
+        FormCtrl,
+        FieldSetting
     },
     data () {
         return {
@@ -68,25 +73,65 @@ export default {
             } else {
                 this.editRow = _.cloneDeep(this.rowDefault);
             }
+            if (this.data) {
+                // 无论新增还是编辑默认显示当前上级id
+                let pid = this.getPid(this.dataKey);
+                if (isNaN(this.data[pid])) {
+                    if (pid === 'solid') {
+                        this.editRow[pid] = _.cloneDeep(this.data)[pid];
+                    } else {
+                        this.editRow[pid] = _.cloneDeep(this.data).id;
+                    }
+                }
+            }
+        },
+        getPid (key) {
+            let rs = null;
+            switch (key) {
+                case 'plane':
+                    rs = 'solid';
+                    break;
+                case 'line':
+                    rs = 'plane';
+                    break;
+                case 'point':
+                    rs = 'line';
+                    break;
+                case 'bit':
+                    rs = 'point';
+                    break;
+            };
+            return rs;
+        },
+        getDefalutVals (configs) {
+            let obj = {};
+            configs.map(x => {
+                obj[x.key] = x.defVal;
+            });
+            return obj;
         },
         // 获取新增默认值
         getRowDefalut () {
             switch (this.dataKey) {
             case 'plane':
-                this.rowDefault = RowDefaultPlane;
+                this.rowDefault = this.getDefalutVals(PlaneFieldConfig);
                 this.fieldConfig = PlaneFieldConfig;
                 break;
             case 'line':
-                this.rowDefault = RowDefaultLine;
+                this.rowDefault = this.getDefalutVals(LineFieldConfig);;
                 this.fieldConfig = LineFieldConfig;
                 break;
             case 'point':
-                this.rowDefault = RowDefaultPoint;
+                this.rowDefault = this.getDefalutVals(PointFieldConfig);;
                 this.fieldConfig = PointFieldConfig;
                 break;
             case 'bit':
-                this.rowDefault = RowDefaultBit;
+                this.rowDefault = this.getDefalutVals(BitFieldConfig);;
                 this.fieldConfig = BitFieldConfig;
+                break;
+            case 'log-article':
+                this.rowDefault = this.getDefalutVals(LogArticleFieldConfig);;
+                this.fieldConfig = LogArticleFieldConfig;
                 break;
             }
         },
@@ -106,9 +151,44 @@ export default {
 </script>
 
 <style lang="scss">
-.btn-field-config {
+.nb-edit-dialog {
+    .el-dialog {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        margin: 0!important;
+        width: auto;
+    }
+    .el-dialog__header {
+        padding: 10px;
+        text-align: center;
+        border-bottom: #ddd 1px solid;
+    }
+    .el-dialog__headerbtn {
+        top: 10px;
+        right: 15px;
+    }
+    .el-dialog__body {
+        height: calc(100% - 120px);
+        padding: 30px 40px 20px 10px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+    .el-dialog__footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width:100%;
+        text-align: right;
+        padding: 10px;
+        border-top: #ddd 1px solid;
+    }
+}
+.btn-field-setting {
     position: absolute;
-    top: 18px;
+    top: 7px;
     right: 45px;
 }
 </style>

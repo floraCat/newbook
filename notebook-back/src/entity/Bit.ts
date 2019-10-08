@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn} from "typeorm";
 import {Point} from './Point';
 
 @Entity()
@@ -13,8 +13,23 @@ export class Bit {
     @Column({ default: '' })
     title: string;
 
-    @Column({ default: 0 })
-    attr: number;
+    @Column({ default: '' })
+    subtitle: string; // 副标题
+
+    @Column({ default: null })
+    attr: number; // 属性
+
+    @Column({ default: null })
+    grade: number; // 等级
+
+    @Column({ default: null })
+    class: number; // 类别
+
+    @Column({ default: '' })
+    keyword: string;
+
+    @Column({ default: '' })
+    pic: string;
 
     @Column({ default: '' })
     audio: string;
@@ -22,23 +37,20 @@ export class Bit {
     @Column({ default: '' })
     video: string;
 
-    @Column({ default: '' })
+    @Column('text')
     description: string;
 
     @Column('text')
     content: string;
 
-    @Column({ default: '' })
+    @Column('text')
     extend: string;
 
     @Column({ default: '' })
-    config: string;
+    createdAt: string;
 
-    @CreateDateColumn()
-    createdAt: string
-
-    @UpdateDateColumn()
-    updatedAt: string
+    @Column({ default: '' })
+    updatedAt: string;
 
     @ManyToOne(type => Point, point => point.bits)
     point: Point;

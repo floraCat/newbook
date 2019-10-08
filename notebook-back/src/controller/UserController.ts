@@ -1,5 +1,6 @@
 import {getRepository} from "typeorm";
 import {NextFunction, Request, Response} from "express";
+var moment = require('moment');
 import {User} from "../entity/User";
 
 export class UserController {
@@ -15,7 +16,14 @@ export class UserController {
     }
 
     async save(request: Request, response: Response, next: NextFunction) {
-        return this.repository.save(request.body);
+        let rs = request.body;
+        if (rs.id === undefined) {
+            rs.createdAt = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+            rs.updatedAt = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+        } else {
+            rs.updatedAt = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+        }
+        return this.repository.save(rs);
     }
 
     async del(request: Request, response: Response, next: NextFunction) {

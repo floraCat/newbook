@@ -15,10 +15,12 @@ export const crudRow = {
             }
             let note = this.rowDelNote || '确定要删除此条目吗？';
             this.$confirm(note).then(() => {
-                let params = { ids: [this.rowData.id] };
+                let params = { ids: [this.rowData.id].join(',') };
                 this.rowApi.del(params).then(() => {
-                    this.$message.success('删除成功');
-                    this.returnParent();
+                    this.$message.success('删除成功，默认返回上一页');
+                    setTimeout(() => {
+                        this.$router.go(-1);
+                    }, 1000);
                 });
             }).catch(() => {});
         },

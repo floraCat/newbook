@@ -26,6 +26,13 @@ module.exports = {
         open: true,
         proxy: proxy
     },
+    css: {
+        loaderOptions: {
+            sass: {
+                data: '@import "./src/assets/styles/index.scss";'
+            }
+        }
+    },
     configureWebpack: {
         resolve: {
             alias: {

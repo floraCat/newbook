@@ -1,0 +1,7 @@
+打开本地文件夹：
+
+- 本目录启动命令行 node __index.js，可监听localhost:2019的网址
+
+- 监听路由为/local_source?path=xxx，即能打开xxx路径的本地文件夹
+
+- 示例：localhost:2019/local-source?path=D:\_phpStudy\WWW\_demo

@@ -1,106 +1,84 @@
-import { AttrOpts } from '@configs/filter-setting';
+import { AttrOpts } from '@configs/options';
 
 /* ------- 编辑时表单控件配置 start ------- */
 
+// plane
 export const PlaneFieldConfig = [
-    { key: 'title', label: '标题', formCtrl: { type: 'text' } },
-    { key: 'sort', label: '排序', formCtrl: { type: 'text' } },
-    { key: 'solid',
+    { key: 'title', label: '标题', defVal: '', formCtrl: { type: 'text' } },
+    { key: 'sort', label: '排序', defVal: 0, formCtrl: { type: 'text' } },
+    { 
+        key: 'solid',
         label: '分类',
+        defVal: null,
         formCtrl: {
             type: 'select',
             defVal: 1,
             opts: [
                 { label: '技术', value: 1 },
-                { label: '生活', value: 2 }
+                { label: '生活', value: 2 },
+                { label: '卡片', value: 3 }
             ]
         }
     }
 ];
 
+// line
 export const LineFieldConfig = [
-    { key: 'title', label: '标题', formCtrl: { type: 'text' } },
-    { key: 'sort', label: '排序', formCtrl: { type: 'text' } },
-    { key: 'description', label: '描述', formCtrl: { type: 'text' } },
-    { key: 'id',
+    { 
+        key: 'plane',
         label: '所属plane',
+        defVal: null,
         formCtrl: {
             type: 'catalog-tree'
         }
-    }
+    },
+    { key: 'title', label: '标题', defVal: '', formCtrl: { type: 'text' } },
+    { key: 'sort', label: '排序', defVal: 0, formCtrl: { type: 'text' } },
+    { key: 'description', label: '描述', defVal: '', formCtrl: { type: 'textarea' } }
 ];
 
+// point
 export const PointFieldConfig = [
-    { key: 'title', label: '标题', formCtrl: { type: 'text' } },
-    { key: 'sort', label: '排序', formCtrl: { type: 'text' } },
-    { key: 'attr', label: '属性', formCtrl: { type: 'select', opts: AttrOpts } },
-    { key: 'description', label: '描述', formCtrl: { type: 'text' } },
-    { key: 'extend', label: '拓展', formCtrl: { type: 'editor' } },
-    { key: 'id',
+    { 
+        key: 'line',
         label: '所属line',
+        defVal: null,
         formCtrl: {
             type: 'catalog-tree'
         }
-    }
+    },
+    { key: 'title', label: '标题', defVal: '', formCtrl: { type: 'text' } },
+    { key: 'sort', label: '排序', defVal: 0, formCtrl: { type: 'text' } },
+    { key: 'attr', label: '属性', defVal: null, formCtrl: { type: 'select', opts: AttrOpts } },
+    { key: 'description', label: '描述', defVal: '', formCtrl: { type: 'text' } },
+    { key: 'extend', label: '拓展', defVal: '', formCtrl: { type: 'editor' } }
 ];
 
+// bit
 export const BitFieldConfig = [
-    { key: 'title', label: '标题', formCtrl: { type: 'text' } },
-    { key: 'sort', label: '排序', formCtrl: { type: 'text' } },
-    { key: 'attr', label: '属性', formCtrl: { type: 'select', opts: AttrOpts } },
-    { key: 'audio', label: '音频', formCtrl: { type: 'file' } },
-    { key: 'video', label: '视频', formCtrl: { type: 'file' } },
-    { key: 'content', label: '正文', formCtrl: { type: 'editor' } },
-    { key: 'id',
+    { 
+        key: 'point',
         label: '所属point',
+        defVal: null,
         formCtrl: {
             type: 'catalog-tree'
         }
-    }
+    },
+    { key: 'title', label: '标题', defVal: '', formCtrl: { type: 'text' } },
+    { key: 'sort', label: '排序', defVal: 0, formCtrl: { type: 'text' } },
+    { key: 'attr', label: '属性', defVal: null, formCtrl: { type: 'select', opts: AttrOpts } },
+    { key: 'audio', label: '音频', defVal: '', formCtrl: { type: 'file' } },
+    { key: 'video', label: '视频', defVal: '', formCtrl: { type: 'file' } },
+    { key: 'description', label: '描述', defVal: '', formCtrl: { type: 'textarea' } },
+    { key: 'content', label: '正文', defVal: '', formCtrl: { type: 'editor' } }
+];
+
+// log-article
+export const LogArticleFieldConfig = [
+    { key: 'title', label: '标题', defVal: '', formCtrl: { type: 'text' } }
 ];
 
 /* ------- 编辑时表单控件配置 end ------- */
-
-/* ------- 新增时默认字段值 start ------- */
-
-export const RowDefaultPlane = {
-    title: '',
-    sort: 0,
-    solid: 1
-};
-
-export const RowDefaultLine = {
-    title: '',
-    sort: 0,
-    description: '',
-    extend: '',
-    planeId: null
-};
-
-export const RowDefaultPoint = {
-    title: '',
-    sort: 0,
-    attr: 0,
-    description: '',
-    extend: '',
-    lineId: null,
-    config: ''
-};
-
-export const RowDefaultBit = {
-    title: '',
-    sort: 0,
-    attr: 0,
-    audio: '',
-    vidoe: '',
-    description: '',
-    content: '',
-    extend: '',
-    pointId: null,
-    config: ''
-};
-
-/* ------- 新增时默认字段值 end ------- */
 
 // bit 字段配置 默认值
 export const FieldConfigDefault = [

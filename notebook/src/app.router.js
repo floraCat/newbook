@@ -1,60 +1,49 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import ListBit from '@/app/views/list-bit.vue';
-import ListPoint from '@/app/views/list-point.vue';
-import ListLine from '@/app/views/list-line.vue';
+/* ---------预处理 start------ */
+import ToBit from './_pre_handle/to-bit/to-bit.vue';
+import xlsxToDb from './_pre_handle/xlsx-to-db.vue';
+/* ---------预处理 end------ */
 
-import FilterSetting from '@/app/views/filter-setting.vue';
-import FilterList from '@/app/views/filter-list.vue';
-// import Editor from '@/app/views/editor.vue';
+import Index from '@/app/views/index.vue';
 
-import ToBit from '@/app/views/to-bit/to-bit.vue';
+import ListBit from '@/app/views/list/list-bit.vue';
+import ListPoint from '@/app/views/list/list-point.vue';
+import ListLine from '@/app/views/list/list-line.vue';
+
+import Filter from '@/app/views/filter/filter.vue';
+import FilterList from '@/app/views/filter/list.vue';
+
+import LogList from '@/app/views/log/log-list.vue';
+import LogArticle from '@/app/views/log/log-article.vue';
+
+import FastEnter from '@/app/views/static-page/fast-enter.vue';
+import LocalSource from '@/app/views/static-page/local-source.vue';
 
 Vue.use(Router);
 
 export default new Router({
     routes: [
-        /* ----- 颗粒拆分 STSRT ----- */
-        {
-            path: '/to-bit',
-            name: 'ToBit',
-            component: ToBit
-        },
-        /* ----- 颗粒拆分 END ----- */
-        {
-            path: '/bit/list',
-            name: 'ListBit',
-            component: ListBit
-        },
-        {
-            path: '/point/list',
-            name: 'ListPoint',
-            component: ListPoint
-        },
-        {
-            path: '/line/list',
-            name: 'ListLine',
-            component: ListLine
-        },
-        {
-            path: '/filter',
-            name: 'FilterSetting',
-            component: FilterSetting
-        },
-        {
-            path: '/filter-list',
-            name: 'FilterList',
-            component: FilterList
-        },
-        // {
-        //     path: '/editor',
-        //     name: 'Editor',
-        //     component: Editor
-        // }
-        {
-            path: '**',
-            redirect: '/line/list'
-        }
+        /* ----- 预处理 STSRT ----- */
+        { path: '/to-bit', name: 'ToBit', component: ToBit }, // 颗粒拆分
+        { path: '/to-db', name: 'xlsxToDb', component: xlsxToDb }, // 颗粒拆分
+        /* ----- 预处理 END ----- */
+
+        { path: '/', name: 'Index', component: Index },
+        { path: '/bit/list', name: 'ListBit', component: ListBit },
+        { path: '/point/list', name: 'ListPoint', component: ListPoint },
+        { path: '/line/list', name: 'ListLine', component: ListLine },
+
+        { path: '/filter', name: 'Filter', component: Filter },
+        { path: '/filter-list', name: 'FilterList', component: FilterList },
+
+        { path: '/log/list', name: 'LogList', component: LogList },
+        { path: '/log/article', name: 'LogArticle', component: LogArticle },
+
+        { path: '/fast-enter', name: 'FastEnter', component: FastEnter },
+        { path: '/local-source', name: 'LocalSource', component: LocalSource },
+
+        { path: '**', redirect: '/' }
     ]
 });

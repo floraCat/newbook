@@ -12,6 +12,7 @@
             width="400"
             node-key="id"
             trigger="click">
+            <el-checkbox v-if="selectType === 'multi'" v-model="isNull">空</el-checkbox>
             <el-tree
                 v-if="treeVisible"
                 class="catalog-tree-ctrl"
@@ -19,9 +20,10 @@
                 :props="props"
                 :load="loadNode"
                 lazy
-                show-checkbox>
+                @node-click="nodeClickHandle"
+                :show-checkbox="selectType === 'multi'">
             </el-tree>
-            <el-button size="mini" @click="confirm">确定</el-button>
+            <el-button size="mini" @click="confirm" v-if="selectType === 'multi'">确定</el-button>
             <slot name="reference" slot="reference"></slot>
         </el-popover>
     </div>
@@ -29,7 +31,7 @@
 <script>
 export default {
     name: 'catalog-tree',
-    props: [ 'dimension' ],
+    props: [ 'dimension', 'selectType' ], // selectType: single | multi (单选or多选)
     data() {
         return {
             props: {
@@ -37,8 +39,8 @@ export default {
                 children: 'zones',
                 isLeaf: 'leaf'
             },
-            treeNodes: null,
-            treeVisible: true
+            treeVisible: true,
+            isNull: false
         };
     },
     watch: {
@@ -47,11 +49,16 @@ export default {
             this.$nextTick(() => {
                 this.treeVisible = true;
             });
+        },
+        '$route' () {
+            this.treeVisible = false;
+            this.$nextTick(() => {
+                this.treeVisible = true;
+            });
         }
     },
     methods: {
         async loadNode(node, resolve) {
-            this.treeNodes = _.cloneDeep(node);
             if (node.level === 0) {
                 let plane = await this.getPlane();
                 return resolve(plane);
@@ -67,10 +74,16 @@ export default {
         },
         getPlane () {
             return new Promise(resolve => {
-                this.$api.Plane.list().then(res => {
+                let params = {
+                    solid: this.$route.query.solid
+                };
+                this.$api.Plane.list(params).then(res => {
                     let list = res;
                     list.map(x => {
                         x.top = true;
+                        if (this.dimension === 'line') {
+                            x.leaf = true;
+                        }
                     });
                     resolve(list);
                 });
@@ -102,15 +115,28 @@ export default {
                 });
             });
         },
+        nodeClickHandle (data) {
+            if (this.selectType === 'single') {
+                if (data.leaf) {
+                    this.$refs.popover.doClose();
+                    this.$emit('confirm', data.id);
+                }
+            }
+        },
         // 获取被选的分类id
         getSelectedCats () {
             let checkedNodes = this.$refs.tree.getCheckedNodes();
+
             let planes = checkedNodes.filter(x => x.top);
+
             let lines = checkedNodes.filter(x => x.plane !== undefined);
+            lines = lines.filter(x => planes.map(y => y.id).indexOf(x.plane) < 0);
+
             let points = checkedNodes.filter(x => x.line !== undefined);
             points = points.filter(x => lines.map(y => y.id).indexOf(x.line) < 0);
-            lines = lines.filter(x => planes.map(y => y.id).indexOf(x.plane) < 0);
+            
             return {
+                isNull: this.isNull,
                 planes: planes.map(x => x.id),
                 lines: lines.map(x => x.id),
                 points: points.map(x => x.id)

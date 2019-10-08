@@ -1,0 +1,18 @@
+各主题excel表对应条目数：
+	
+
+      Excel表		Plane/条		Line/条			Point/条		Bit/条
+	
+	it             9			111			584
+
+	life		14			74			246
+
+	frontend	2 			7 			16 			2316
+
+	english		1 			2 			6 			1189
+
+	express		1 			2 			4 			3211
+
+	pic 		1 			4 			11 			1904
+
+	place 		1 			2 			5 			867

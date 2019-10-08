@@ -25,6 +25,7 @@ export const crudList = {
             }).catch(() => {});
         },
         listAdd () {
+            this.currentIndex = 0; // 为了默认显示上级id
             this.listEditAction = 'add';
             this.listEditVisible = true;
         },
@@ -38,7 +39,7 @@ export const crudList = {
             this.listApi.edit(params).then(() => {
                 if (this.listEditAction === 'add') {
                     this.$message.success('新增成功');
-                    this.listData.unshift(params);
+                    this.getList();
                 }
                 if (this.listEditAction === 'mod') {
                     this.$message.success('修改成功');

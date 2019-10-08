@@ -1,4 +1,4 @@
-import {Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne} from "typeorm";
+import {Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne} from "typeorm";
 import { Point } from "./Point";
 import { Plane } from "./Plane";
 
@@ -8,10 +8,13 @@ export class Line {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column({ default: '' })
+    pid: string;
+
     @Column({ default: 0 })
     sort: number;
 
-    @Column()
+    @Column({ default: '' })
     title: string;
 
     @Column({ default: '' })
@@ -20,11 +23,11 @@ export class Line {
     @Column('text')
     extend: string;
 
-    @CreateDateColumn()
-    createdAt: string
+    @Column({ default: '' })
+    createdAt: string;
 
-    @UpdateDateColumn()
-    updatedAt: string
+    @Column({ default: '' })
+    updatedAt: string;
 
     @ManyToOne(type => Plane, plane => plane.lines)
     plane: Plane;

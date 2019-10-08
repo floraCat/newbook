@@ -1,11 +1,11 @@
 export const Plane = {
-    list: function () {
-        return Axios.get('/nb/planes').then((response) => {
+    row: function (id) {
+        return Axios.get(`/nb/planes/${id}`).then((response) => {
             return response.data;
         });
     },
-    row: function (id) {
-        return Axios.get(`/nb/planes/${id}`).then((response) => {
+    list: function (params) {
+        return Axios.get('/nb/planes', { params }).then((response) => {
             return response.data;
         });
     },
@@ -15,14 +15,10 @@ export const Plane = {
         });
     },
     del: function (params) {
-        return Axios.delete('/nb/planes', { params }).then((response) => {
+        let url = `/nb/planes/${params.ids}`;
+        return Axios.delete(url).then((response) => {
             return response.data;
         });
-    },
-    // mod: function (params) {
-    //     return Axios.put('/nb/planes', params).then((response) => {
-    //         return response.data;
-    //     });
-    // },
+    }
 };
 

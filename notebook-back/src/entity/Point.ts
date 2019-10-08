@@ -1,4 +1,4 @@
-import {Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne} from "typeorm";
+import {Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne} from "typeorm";
 import { Bit } from "./Bit";
 import { Line } from "./Line";
 
@@ -8,13 +8,16 @@ export class Point {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column({ default: '' })
+    pid: string;
+
     @Column({ default: 0 })
     sort: number;
 
-    @Column()
+    @Column({ default: '' })
     title: string;
 
-    @Column({ default: 0 })
+    @Column({ default: null })
     attr: number;
 
     @Column({ default: '' })
@@ -24,13 +27,13 @@ export class Point {
     extend: string;
 
     @Column({ default: '' })
-    config: string;
+    subFieldSet: string;
 
-    @CreateDateColumn()
-    createdAt: string
+    @Column({ default: '' })
+    createdAt: string;
 
-    @UpdateDateColumn()
-    updatedAt: string
+    @Column({ default: '' })
+    updatedAt: string;
 
     @ManyToOne(type => Line, line => line.points)
     line: Line;

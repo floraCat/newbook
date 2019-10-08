@@ -13,10 +13,18 @@ Vue.use(ElementUI);
 import Common from './common';
 Vue.use(Common);
 
+import jquery from 'jquery'
+window.jQuery = window.$ = jquery
+
 // 富文本编辑器
-import 'froala-editor/css/froala_editor.pkgd.min.css';
+require('froala-editor/js/froala_editor.pkgd.min')
+require('froala-editor/css/froala_editor.pkgd.min.css')
+require('font-awesome/css/font-awesome.css')
+require('froala-editor/css/froala_style.min.css')
 import VueFroala from 'vue-froala-wysiwyg'
 Vue.use(VueFroala)
 
 // global style
 import './assets/styles/index.scss';
+
+import 'swiper/css/swiper.css';
