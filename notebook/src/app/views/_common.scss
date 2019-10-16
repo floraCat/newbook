@@ -77,7 +77,7 @@
                 min-height: 54px;
                 padding: 15px;
                 background: $--primary-bg;
-                margin-bottom: 15px;
+                margin-bottom: 8px;
                 .btns {
                     top: -5px;
                     right: -10px;
@@ -88,36 +88,38 @@
 }
 
 // 弹窗样式
-.el-dialog {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    right: 8px;
-    bottom: 8px;
-    margin: 0!important;
-    width: auto;
-}
-.el-dialog__header {
-    padding: 10px;
-    text-align: center;
-    border-bottom: #ddd 1px solid;
-}
-.el-dialog__headerbtn {
-    top: 10px;
-    right: 15px;
-}
-.el-dialog__body {
-    height: calc(100% - 120px);
-    padding: 30px 40px 20px 10px;
-    overflow-y: scroll;
-    overflow-x: hidden;
-}
-.el-dialog__footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width:100%;
-    text-align: right;
-    padding: 10px;
-    border-top: #ddd 1px solid;
+.nb-dialog {
+    .el-dialog {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        margin: 0!important;
+        width: auto;
+    }
+    .el-dialog__header {
+        padding: 10px;
+        text-align: center;
+        border-bottom: #ddd 1px solid;
+    }
+    .el-dialog__headerbtn {
+        top: 10px;
+        right: 15px;
+    }
+    .el-dialog__body {
+        height: calc(100% - 120px);
+        padding: 30px 40px 20px 10px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+    .el-dialog__footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width:100%;
+        text-align: right;
+        padding: 10px;
+        border-top: #ddd 1px solid;
+    }
 }

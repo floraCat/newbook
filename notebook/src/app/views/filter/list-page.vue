@@ -20,10 +20,11 @@
                             <!--catalog-tree-->
                             <catalog-tree
                                 class="fr"
+                                :visible="catalogTreeVisible"
                                 selectType="single"
                                 :dimension="dimension"
-                                @confirm="getCatalog">
-                                <el-button size="mini" class="show" slot="reference" @click="currentIndex = index">转移</el-button>
+                                @confirm="catalogTreeConfirm">
+                                <el-button size="mini" class="show" slot="reference" @click="catalogTreeClick(index)">转移</el-button>
                             </catalog-tree>
                         </div>
                         <template v-if="$route.query.dimension === 'bit'">
@@ -32,14 +33,14 @@
                                 <span>createdAt : {{item.createdAt}}</span> | 
                                 <span>updatedAt : {{item.updatedAt}}</span>
                             </div>
-                            <p>{{item.content}}</p>
+                            <div v-html="item.content"></div>
                         </template>
                         <template v-else-if="$route.query.dimension === 'point'">
                             <h4>{{item.title}}</h4>
                             <div class="bits">
                                 <span v-for="bit in item.bits" :key="bit.id">
                                     <template v-if="bit.title">{{bit.title}}</template>
-                                    {{bit.content}}
+                                    <div v-html="bit.content"></div>
                                 </span>
                             </div>
                         </template>
@@ -83,7 +84,8 @@ export default {
             dataList: [],
             currentIndex: null,
 
-            rowEditVisible: false
+            rowEditVisible: false,
+            catalogTreeVisible: false
         };
     },
     computed: {
@@ -127,15 +129,35 @@ export default {
             this.currentIndex = index;
             this.rowEditVisible = true;
         },
-        // 编辑确认回调
-        rowEditConfirm (returnData) {
-            this.$API.edit(returnData).then(() => {
-                this.$message.success('修改成功');
-                let data = Object.assign(this.dataList[this.currentIndex], returnData);
-                this.$set(this.dataList, this.currentIndex, data);
+        // 点击分类下拉
+        async catalogTreeClick (index) {
+            if (this.$store.state.planes.length <= 0) {
+                let planes = await this.getPlane();
+                this.$store.commit('planes', planes);
+            }
+            this.catalogTreeVisible = true;
+            this.currentIndex = index;
+        },
+        // 下拉分类前先加载所有plane(如放在下拉分类组件内加载列表会多次请求)
+        getPlane () {
+            return new Promise(resolve => {
+                let params = {
+                    solid: this.$route.query.solid
+                };
+                this.$api.Plane.list(params).then(res => {
+                    let list = res;
+                    list.map(x => {
+                        x.top = true;
+                        if (this.dimension === 'line') {
+                            x.leaf = true;
+                        }
+                    });
+                    resolve(list);
+                });
             });
         },
-        getCatalog (catId) {
+        // 点选分类回调
+        catalogTreeConfirm (catId) {
             let params = {};
             if (this.dimension === 'bit') {
                 params = Object.assign(this.dataList[this.currentIndex], { point: catId});
@@ -146,6 +168,14 @@ export default {
             this.$API.edit(params).then(res => {
                 this.$message.success('转移成功');
                 this.getList();
+            });
+        },
+        // 编辑确认回调
+        rowEditConfirm (returnData) {
+            this.$API.edit(returnData).then(() => {
+                this.$message.success('修改成功');
+                let data = Object.assign(this.dataList[this.currentIndex], returnData);
+                this.$set(this.dataList, this.currentIndex, data);
             });
         }
     }

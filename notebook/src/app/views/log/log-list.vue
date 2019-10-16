@@ -24,7 +24,7 @@
         <ul class="list">
             <li v-for="(item, index) in articleList" :key="item.id">
                 <div class="hd">
-                    <h4 @click="viewDetail(item.id)">{{item.title}}</h4>
+                    <h4 @click="viewDetail(index)">{{item.title}}</h4>
                     <a class="btn" href="javascript:;" @click="editHandle(index)">编辑</a>
                     <a class="btn" href="javascript:;" @click="delHandle(index)">删除</a>
                     <span>创建 : {{item.createdAt | timeFormat}}</span>
@@ -46,16 +46,27 @@
             @close="visibleEdit = false"
             @confirm="editConfirm">
         </dialog-edit>
+
+        <!--查看详情-->
+        <dialog-view
+            v-if="visibleView"
+            :visible="visibleView"
+            :data="articleList[currentIndex]"
+            @close="visibleView = false">
+        </dialog-view>
+        
     </div>
 </template>
 
 <script>
 import moment from 'moment';
 import DialogEdit from './_components/dialog-edit';
+import DialogView from './_components/dialog-view';
 export default {
     name: 'nb-log-list',
     components: {
-        DialogEdit
+        DialogEdit,
+        DialogView
     },
     data () {
         return {
@@ -71,6 +82,7 @@ export default {
             currentIndex: null,
 
             visibleEdit: false,
+            visibleView: false,
             actionEdit: null
         }
     },
@@ -116,12 +128,9 @@ export default {
         switchTopic (id) {
             this.$router.push({ name: 'LogList', query: { topic: id } });
         },
-        viewDetail (id) {
-            const {href} = this.$router.resolve({
-                name: 'LogArticle',
-                query: { id: id }
-            });
-            window.open(href, '_blank');
+        viewDetail (index) {
+            this.currentIndex = index;
+            this.visibleView = true;
         },
         delHandle (index) {
             this.$confirm('确定要删除此条目吗？').then(() => {

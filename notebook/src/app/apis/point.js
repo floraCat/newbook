@@ -4,6 +4,12 @@ export const Point = {
             return response.data;
         });
     },
+    list: function (lineId) {
+        let params = { line: lineId };
+        return Axios.get('/nb/points', { params }).then((response) => {
+            return response.data;
+        });
+    },
     edit: function (params) {
         return Axios.post('/nb/points', params).then((response) => {
             return response.data;
@@ -12,6 +18,11 @@ export const Point = {
     del: function (params) {
         let url = `/nb/points/${params.ids}`;
         return Axios.delete(url).then((response) => {
+            return response.data;
+        });
+    },
+    sort: function (params) {
+        return Axios.post('/nb/points/sort', params).then((response) => {
             return response.data;
         });
     }

@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        class="nb-edit-dialog"
+        class="nb-edit-dialog nb-dialog"
         :title="title"
         :visible.sync="dialogVisible">
         <el-form :model="editRow" label-width="100px">
@@ -33,8 +33,7 @@ export default {
     data () {
         return {
             editRow: {},
-            fieldConfig: FieldConfig,
-            rowDefault: {}
+            fieldConfig: FieldConfig
         };
     },
     computed: {
@@ -56,8 +55,8 @@ export default {
             if (this.action === 'mod') {
                 this.editRow = _.cloneDeep(this.data);
             } else {
-                this.rowDefault = this._getDefalutVals(FieldConfig);
-                this.editRow = _.cloneDeep(this.rowDefault);
+                let rowDefault = this._getDefalutVals(FieldConfig);
+                this.editRow = _.cloneDeep(rowDefault);
             }
             this.editRow['topic'] = parseInt(this.$route.query.topic);
         },

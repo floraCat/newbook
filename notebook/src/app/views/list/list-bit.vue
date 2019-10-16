@@ -15,7 +15,7 @@
                 </div>
             </dt>
             <dd>
-                <template v-for="(bit, index2) in rowData.bits">
+                <template v-for="(bit, index2) in listData">
                     <section class="hover-show-btns" :key="index2">
                         <div v-if="bit.title" v-text="bit.title"></div>
                         <div v-if="!bit.title" v-html="bit.content"></div>
@@ -23,13 +23,16 @@
                             <el-button size="mini" @click="listMod(index2)">编辑</el-button>
                             <el-button size="mini" @click="listDel(index2)">删除</el-button>
                             <el-button size="mini" @click="unbind(index2)">解绑</el-button>
+                            <el-button size="mini" @click="sortFirst(index2)">前置</el-button>
+                            <el-button size="mini" @click="sortLast(index2)">后置</el-button>
                             <!--catalog-tree-->
                             <catalog-tree
                                 class="fr"
+                                v-if="catalogTreeVisible"
                                 selectType="single"
                                 dimension="bit"
-                                @confirm="getCatalog">
-                                <el-button class="show" size="mini" slot="reference" @click="bitsCurrentIndex = index2">转移</el-button>
+                                @confirm="catalogTreeConfirm">
+                                <el-button class="show" size="mini" slot="reference" @click="catalogTreeClick(index2)">转移</el-button>
                             </catalog-tree>
                         </div>
                     </section>
@@ -77,27 +80,25 @@
 </template>
 
 <script>
-import { crudRow } from '@common/mixins/crud-row';
-import { crudList } from '@common/mixins/crud-list';
 import DialogEdit from '../_components/dialog-edit';
 export default {
     name: 'nb-list-point',
     components: {
         DialogEdit
     },
-    mixins: [ crudRow, crudList ],
     data () {
         return {
-            rowApi: this.$api.Point,
-            rowDelNote: '删除此条目将会一并删除其下属的所有颗粒，确定要删除吗？',
+            rowData: {},
 
-            // 添加子条目
-            rowChildApi: this.$api.Bit,
-            rowChildTopKey: 'point',
+            listData: [],
+            currentIndex: null,
+            listEditAction: 'add',
 
-            listApi: this.$api.Bit,
-
-            bitsCurrentIndex: null
+            rowEditVisible: false, // row 编辑弹窗
+            rowChildEditVisible: false, // row 添加子条目弹窗
+            listEditVisible: false, // list 编辑
+            listChildEditVisible: false, // list 添加子条目的弹窗
+            catalogTreeVisible: false // 分类树弹窗
         }
     },
     mounted () {
@@ -105,13 +106,107 @@ export default {
     },
     methods: {
         getData () {
-            this.rowApi.row(this.$route.query.pid).then(res => {
+            this.$api.Point.row(this.$route.query.pid).then(res => {
                 this.rowData = res;
                 this.rowData.line = res.line.id;
-                this.listData = res.bits;
+                this.getSubList();
+            });
+        },
+        getSubList () {
+            this.$api.Bit.list(this.rowData.id).then(res => {
+                this.listData = res;
                 this.listData.map((x, i) => {
-                    this.listData[i]['point'] = res.id;
+                    this.listData[i]['point'] = this.rowData.id;
+                    this.listData[i]['visible'] = false;
                 });
+            });
+        },
+        rowDel () {
+            if (this.rowSubKey && this.rowData[this.rowSubKey].length > 0) {
+                this.$message.warning('请删除下属所有子条目后再执行删除');
+                return;
+            }
+            let note = '删除此条目将会一并删除其下属的所有颗粒，确定要删除吗？' || '确定要删除此条目吗？';
+            this.$confirm(note).then(() => {
+                let params = { ids: [this.rowData.id].join(',') };
+                this.$api.Point.del(params).then(() => {
+                    this.$message.success('删除成功，默认返回上一页');
+                    setTimeout(() => {
+                        this.$router.go(-1);
+                    }, 1000);
+                });
+            }).catch(() => {});
+        },
+        rowMod () {
+            this.rowEditVisible = true;
+        },
+        // 编辑完成后回调
+        rowEditConfirm (params) {
+            this.$api.Point.edit(params).then(() => {
+                this.$message.success('修改成功');
+                this.$set(this.rowData, 'title', params.title);
+            });
+        },
+        // 增加子条目
+        rowAddChild () {
+            this.rowChildEditVisible = true;
+        },
+        // 增加子条目后回调
+        rowChildEditConfirm (params) {
+            params.point = this.$route.query.pid;
+            this.$api.Bit.edit(params).then(() => {
+                this.$message.success('新增子条目成功');
+                this.getData();
+            });
+        },
+        listDel (index) {
+            if (this.listSubKey && this.listData[index][this.listSubKey].length > 0) {
+                this.$message.warning('请删除下属所有子条目后再执行删除');
+                return;
+            }
+            let note = this.listDelNote || '确定要删除此条目吗？';
+            this.$confirm(note).then(() => {
+                let params = { ids: [this.listData[index].id].join(',') };
+                this.$api.Bit.del(params).then(() => {
+                    this.$message.success('删除成功');
+                    this.listData.splice(index, 1);
+                });
+            }).catch(() => {});
+        },
+        listAdd () {
+            this.currentIndex = 0; // 为了默认显示上级id
+            this.listEditAction = 'add';
+            this.listEditVisible = true;
+        },
+        listMod (index) {
+            this.currentIndex = index;
+            this.listEditAction = 'mod';
+            this.listEditVisible = true;
+        },
+        // 编辑完成后回调
+        listEditConfirm (params) {
+            this.$api.Bit.edit(params).then(() => {
+                if (this.listEditAction === 'add') {
+                    this.$message.success('新增成功');
+                    this.getSubList();
+                }
+                if (this.listEditAction === 'mod') {
+                    this.$message.success('修改成功');
+                    this.getSubList();
+                }
+            });
+        },
+        // 增加子条目
+        listAddChild (index) {
+            this.currentIndex = index;
+            this.listChildEditVisible = true;
+        },
+        // 添加子条目后回调
+        listChildEditConfirm (params) {
+            params[this.listChildTopKey] = this.listData[this.currentIndex].id; 
+            this.listChildApi.edit(params).then(() => {
+                this.$message.success('新增子条目成功');
+                this.getSubList();
             });
         },
         // 解绑
@@ -123,11 +218,58 @@ export default {
                 this.listData.splice(index, 1);
             });
         },
-        getCatalog (catId) {
+        // 前置
+        sortFirst (index) {
+            let params = this.listData[index];
+            params.sortPos = 'first';
+            this.$api.Bit.sort(params).then(res => {
+                this.$message.success('前置成功');
+                this.getData();
+            });
+        },
+        // 后置
+        sortLast (index) {
+            let params = this.listData[index];
+            params.sortPos = 'last';
+            this.$api.Bit.sort(params).then(res => {
+                this.$message.success('后置成功');
+                this.getData();
+            });
+        },
+        // 点击分类下拉
+        async catalogTreeClick (index) {
+            if (this.$store.state.planes.length <= 0) {
+                let planes = await this.getPlane();
+                this.$store.commit('planes', planes);
+            }
+            this.catalogTreeVisible = true;
+            this.currentIndex = index;
+        },
+        // 下拉分类前先加载所有plane
+        getPlane () {
+            return new Promise(resolve => {
+                let params = {
+                    solid: this.$route.query.solid
+                };
+                this.$api.Plane.list(params).then(res => {
+                    let list = res;
+                    list.map(x => {
+                        x.top = true;
+                        if (this.dimension === 'line') {
+                            x.leaf = true;
+                        }
+                    });
+                    resolve(list);
+                });
+            });
+        },
+        // 点选分类回调
+        catalogTreeConfirm (catId) {
             let params = {};
-            params = Object.assign(this.rowData.bits[this.bitsCurrentIndex], { point: catId});
+            params = Object.assign(this.rowData.bits[this.currentIndex], { point: catId});
             this.$api.Bit.edit(params).then(res => {
                 this.$message.success('转移成功');
+                this.catalogTreeVisible = false;
                 this.getData();
             });
         }

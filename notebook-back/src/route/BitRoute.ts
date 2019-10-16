@@ -8,6 +8,12 @@ export const BitRoute = [
         action: "row"
     },
     {
+        method: "get",
+        route: "/bits",
+        controller: BitController,
+        action: "list"
+    },
+    {
         method: "post",
         route: "/bits",
         controller: BitController,
@@ -18,5 +24,11 @@ export const BitRoute = [
         route: "/bits/:ids",
         controller: BitController,
         action: "del"
+    },
+    {
+        method: "post",
+        route: "/bits/sort",
+        controller: BitController,
+        action: "sort"
     }
 ];

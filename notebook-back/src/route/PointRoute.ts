@@ -8,6 +8,12 @@ export const PointRoute = [
         action: "row"
     },
     {
+        method: "get",
+        route: "/points",
+        controller: PointController,
+        action: "list"
+    },
+    {
         method: "post",
         route: "/points",
         controller: PointController,
@@ -18,5 +24,11 @@ export const PointRoute = [
         route: "/points/:ids",
         controller: PointController,
         action: "del"
+    },
+    {
+        method: "post",
+        route: "/points/sort",
+        controller: PointController,
+        action: "sort"
     }
 ];

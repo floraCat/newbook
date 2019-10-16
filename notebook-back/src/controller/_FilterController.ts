@@ -20,6 +20,7 @@ export class _FilterController {
         let _opts = request.query;
         let _skip = _opts.pageSize * (_opts.pageNum - 1) || 0;
         let _take = parseInt(_opts.pageSize) || 10;
+        let _total = _opts.total;
         let _orderField = _opts.sortField || 'sort';
         let _where = await this.getSql(_opts);
 
@@ -56,9 +57,15 @@ export class _FilterController {
             .skip(_skip)
             .take(_take)
             .getMany();
+            // total有值(有限定最大条数)
+            if (_total) {
+                _total = list3.length < _total ? list3.length : _total;
+            } else {
+                _total = list3.length;
+            }
         let rs = {
             list: list2,
-            total: list3.length
+            total: parseInt(_total)
         }
         return rs;
     };
@@ -122,7 +129,11 @@ export class _FilterController {
         let sql = '';
         let cats = { isNull: false, planes: [], lines: [], points: [] };
         if (opts.cats) {
-            cats = JSON.parse(opts.cats);
+            if (opts.cats === 'NULL') { // 碎片
+                cats.isNull = true;
+            } else {
+                cats = JSON.parse(opts.cats);
+            }
         } else {
             if (opts.solid) {
                 let _where = `_plane.solid = ${opts.solid}`;

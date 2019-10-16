@@ -37,7 +37,6 @@ export class PlaneController {
         let _where = request.query.solid ? '_filter.solid = :solid' : '';
         return this.repository
             .createQueryBuilder('_filter')
-            .leftJoinAndSelect('_filter.lines', 'lines')
             .where(_where)
             .orderBy('_filter.sort', 'ASC')
             .setParameters({

@@ -34,4 +34,58 @@ export class LineController {
         return 'ok';
     }
 
+    async list(request: Request, response: Response, next: NextFunction) {
+        let _where = `_filter.plane = ${request.query.plane}`;
+        return this.repository
+            .createQueryBuilder('_filter')
+            .where(_where)
+            .orderBy('_filter.sort', 'ASC')
+            .skip(0)
+            .take(30)
+            .getMany();
+    }
+
+    // 排序
+    async sort(request: Request, response: Response, next: NextFunction) {
+        let query = request.body;
+        let _where = '';
+        if (query.sortPos === 'first') {
+            _where = `_filter.plane = ${query.plane} AND _filter.sort <= ${query.sort}`;
+        }
+        if (query.sortPos === 'last') {
+            _where = `_filter.plane = ${query.plane} AND _filter.sort >= ${query.sort}`;
+        }
+        let list = await this.repository
+            .createQueryBuilder('_filter')
+            .where(_where)
+            .orderBy('_filter.sort', 'ASC')
+            .getMany();
+        let _index;
+        // 前置
+        if (query.sortPos === 'first') {
+            let first = list.find(x => x.id === query.id);
+            first.sort = 1;
+            await this.repository.save(first);
+            _index = 2;
+        }
+        // 后置
+        if (query.sortPos === 'last') {
+            let last = list.find(x => x.id === query.id);
+            last.sort = query.sort + list.length - 1;
+            await this.repository.save(last);
+            _index = query.sort;
+        }
+        let rest = list.filter(x => x.id !== query.id);
+        for (let i = 0; i < rest.length; i ++) {
+            rest[i].sort = _index;
+            await this.repository.save(rest[i]);
+            _index ++;
+        }
+        return {
+            code: 0,
+            data: query.id,
+            message: 'success'
+        };
+    }
+
 }

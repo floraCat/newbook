@@ -4,6 +4,12 @@ export const Line = {
             return response.data;
         });
     },
+    list: function (planeId) {
+        let params = { plane: planeId };
+        return Axios.get('/nb/lines', { params }).then((response) => {
+            return response.data;
+        });
+    },
     edit: function (params) {
         return Axios.post('/nb/lines', params).then((response) => {
             return response.data;
@@ -12,6 +18,11 @@ export const Line = {
     del: function (params) {
         let url = `/nb/lines/${params.ids}`;
         return Axios.delete(url).then((response) => {
+            return response.data;
+        });
+    },
+    sort: function (params) {
+        return Axios.post('/nb/lines/sort', params).then((response) => {
             return response.data;
         });
     }

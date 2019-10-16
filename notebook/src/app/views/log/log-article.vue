@@ -28,18 +28,17 @@
 </template>
 
 <script>
-import { crudRow } from '@common/mixins/crud-row';
 import DialogEdit from '../_components/dialog-edit';
 export default {
     name: 'nb-log-article',
     components: {
         DialogEdit
     },
-    mixins: [ crudRow ],
     data () {
         return {
-            rowApi: this.$api.LogArticle,
-            rowSubKey: 'articles'
+            rowData: {},
+            rowEditVisible: false, // row 编辑弹窗
+            rowChildEditVisible: false // row 添加子条目的弹窗
         }
     },
     mounted () {
@@ -47,9 +46,34 @@ export default {
     },
     methods: {
         getData () {
-            this.rowApi.row(this.$route.query.id).then(res => {
+            this.$api.LogArticle.row(this.$route.query.id).then(res => {
                 this.rowData = res;
-                // this.rowData.topic = res.topic.id;
+            });
+        },
+        rowDel () {
+            if (this.rowData.articles.length > 0) {
+                this.$message.warning('请删除下属所有子条目后再执行删除');
+                return;
+            }
+            let note = this.rowDelNote || '确定要删除此条目吗？';
+            this.$confirm(note).then(() => {
+                let params = { ids: [this.rowData.id].join(',') };
+                this.$api.LogArticle.del(params).then(() => {
+                    this.$message.success('删除成功，默认返回上一页');
+                    setTimeout(() => {
+                        this.$router.go(-1);
+                    }, 1000);
+                });
+            }).catch(() => {});
+        },
+        rowMod () {
+            this.rowEditVisible = true;
+        },
+        // 编辑完成后回调
+        rowEditConfirm (params) {
+            this.$api.LogArticle.edit(params).then(() => {
+                this.$message.success('修改成功');
+                this.$set(this.rowData, 'title', params.title);
             });
         }
     }

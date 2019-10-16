@@ -12,7 +12,16 @@
             <router-link target="_blank" :to="{name: 'Filter', query: { solid: 1 }}">Filter</router-link>
         </ol>
         <ol class="layout1">
-            <router-link target="_blank" :to="{name: 'FilterList', query: { showType: 'list', sortField: 'updatedAt', sortType: 'DESC', dimension: 'bit' }}">
+            <router-link target="_blank" :to="{
+                name: 'FilterList',
+                query: { 
+                    showType: 'list',
+                    sortField: 'updatedAt',
+                    sortType: 'DESC',
+                    dimension: 'bit',
+                    total: 50
+                }
+            }">
                 最近更新
             </router-link>
         </ol>
@@ -20,7 +29,14 @@
             <a href="javascript:;" @click="addVisible = true">
                 添加颗粒
             </a>
-            <router-link target="_blank" :to="{name: 'FilterList', query: { showType: 'list', dimension: 'bit', cats: '' } }">
+            <router-link target="_blank" :to="{
+                name: 'FilterList', 
+                query: { 
+                    showType: 'list',
+                    dimension: 'bit',
+                    cats: 'NULL'
+                }
+            }">
                 碎片处理
             </router-link>
         </ol>

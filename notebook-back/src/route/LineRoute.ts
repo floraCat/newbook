@@ -8,6 +8,12 @@ export const LineRoute = [
         action: "row"
     },
     {
+        method: "get",
+        route: "/lines",
+        controller: LineController,
+        action: "list"
+    },
+    {
         method: "post",
         route: "/lines",
         controller: LineController,
@@ -18,5 +24,11 @@ export const LineRoute = [
         route: "/lines/:ids",
         controller: LineController,
         action: "del"
+    },
+    {
+        method: "post",
+        route: "/lines/sort",
+        controller: LineController,
+        action: "sort"
     }
 ];

@@ -20,10 +20,11 @@
                             <!--catalog-tree-->
                             <catalog-tree
                                 class="fr"
+                                :visible="catalogTreeVisible"
                                 selectType="single"
                                 :dimension="dimension"
-                                @confirm="getCatalog">
-                                <el-button size="mini" slot="reference" @click="currentIndex = index">转移</el-button>
+                                @confirm="catalogTreeConfirm">
+                                <el-button size="mini" class="show" slot="reference" @click="catalogTreeClick(index)">转移</el-button>
                             </catalog-tree>
                         </div>
                         <template v-if="$route.query.dimension === 'bit'">
@@ -32,7 +33,7 @@
                                 <span>createdAt : {{item.createdAt}}</span> | 
                                 <span>updatedAt : {{item.updatedAt}}</span>
                             </div>
-                            <div>{{item.content}}</div>
+                            <div v-html="item.content"></div>
                         </template>
                         <template v-else-if="$route.query.dimension === 'point'">
                             <h4>{{item.title}}</h4>
@@ -40,7 +41,7 @@
                                 <template v-for="(bit, index) in item.bits">
                                     <span :key="bit.id" v-if="index <= 5">
                                         <template v-if="bit.title"> {{bit.title}} </template>
-                                        <div v-if="!bit.title" class="content">{{bit.content}}</div>
+                                        <div v-if="!bit.title" class="content" v-html="bit.content"></div>
                                     </span>
                                 </template>
                                 <p v-if="item.bits.length > 5">......</p>
@@ -66,10 +67,12 @@
                             <a class="edit" href="javascript:;" @click="editHandle(index)">编辑</a>
                             <!--catalog-tree-->
                             <catalog-tree
+                                class="fr"
+                                :visible="catalogTreeVisible"
                                 selectType="single"
                                 :dimension="dimension"
-                                @confirm="getCatalog">
-                                <a href="javascript:;" slot="reference" @click="currentIndex = index">转移</a>
+                                @confirm="catalogTreeConfirm">
+                                <el-button size="mini" class="show" slot="reference" @click="catalogTreeClick(index)">转移</el-button>
                             </catalog-tree>
                         </div>
                         <p class="time">
@@ -100,13 +103,13 @@
                         </div>
                         <div class="content">
                             <template v-if="dimension === 'bit'">
-                                {{item.content}}
+                                <div v-html="item.content"></div>
                             </template>
                             <template v-if="dimension === 'point'">
                                 <ul>
                                     <li v-for="bit in item.bits" :key="bit.id">
                                         {{bit.title}}
-                                        {{bit.content}}
+                                        <div v-html="item.content"></div>
                                     </li>
                                 </ul>
                             </template>
@@ -158,7 +161,8 @@ export default {
 
             attrOpts: AttrOpts,
 
-            rowEditVisible: false
+            rowEditVisible: false,
+            catalogTreeVisible: false
         };
     },
     computed: {
@@ -368,7 +372,35 @@ export default {
                 this.$set(this.dataList, this.currentIndex, data);
             });
         },
-        getCatalog (catId) {
+        // 点击分类下拉
+        async catalogTreeClick (index) {
+            if (this.$store.state.planes.length <= 0) {
+                let planes = await this.getPlane();
+                this.$store.commit('planes', planes);
+            }
+            this.catalogTreeVisible = true;
+            this.currentIndex = index;
+        },
+        // 下拉分类前先加载所有plane(如放在下拉分类组件内加载列表会多次请求)
+        getPlane () {
+            return new Promise(resolve => {
+                let params = {
+                    solid: this.$route.query.solid
+                };
+                this.$api.Plane.list(params).then(res => {
+                    let list = res;
+                    list.map(x => {
+                        x.top = true;
+                        if (this.dimension === 'line') {
+                            x.leaf = true;
+                        }
+                    });
+                    resolve(list);
+                });
+            });
+        },
+        // 点选分类回调
+        catalogTreeConfirm (catId) {
             let params = {};
             if (this.dimension === 'bit') {
                 params = Object.assign(this.dataList[this.currentIndex], { point: catId});

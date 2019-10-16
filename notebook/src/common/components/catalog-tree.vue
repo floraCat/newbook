@@ -14,7 +14,7 @@
             trigger="click">
             <el-checkbox v-if="selectType === 'multi'" v-model="isNull">空</el-checkbox>
             <el-tree
-                v-if="treeVisible"
+                v-if="visible"
                 class="catalog-tree-ctrl"
                 ref="tree"
                 :props="props"
@@ -31,7 +31,7 @@
 <script>
 export default {
     name: 'catalog-tree',
-    props: [ 'dimension', 'selectType' ], // selectType: single | multi (单选or多选)
+    props: [ 'dimension', 'selectType', 'visible' ], // selectType: single | multi (单选or多选)
     data() {
         return {
             props: {
@@ -39,29 +39,18 @@ export default {
                 children: 'zones',
                 isLeaf: 'leaf'
             },
-            treeVisible: true,
             isNull: false
         };
     },
-    watch: {
-        dimension () {
-            this.treeVisible = false;
-            this.$nextTick(() => {
-                this.treeVisible = true;
-            });
-        },
-        '$route' () {
-            this.treeVisible = false;
-            this.$nextTick(() => {
-                this.treeVisible = true;
-            });
+    computed: {
+        planes () {
+            return this.$store.state.planes;
         }
     },
     methods: {
         async loadNode(node, resolve) {
             if (node.level === 0) {
-                let plane = await this.getPlane();
-                return resolve(plane);
+                return resolve(this.planes);
             }
             if (node.level === 1) {
                 let line = await this.getLine(node.data.id);
@@ -71,23 +60,6 @@ export default {
                 let point = await this.getPoint(node.data.id);
                 return resolve(point);
             }
-        },
-        getPlane () {
-            return new Promise(resolve => {
-                let params = {
-                    solid: this.$route.query.solid
-                };
-                this.$api.Plane.list(params).then(res => {
-                    let list = res;
-                    list.map(x => {
-                        x.top = true;
-                        if (this.dimension === 'line') {
-                            x.leaf = true;
-                        }
-                    });
-                    resolve(list);
-                });
-            });
         },
         getLine (pid) {
             return new Promise(resolve => {
