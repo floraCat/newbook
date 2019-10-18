@@ -4,8 +4,7 @@ export const Bit = {
             return response.data;
         });
     },
-    list: function (pointId) {
-        let params = { point: pointId };
+    list: function (params) {
         return Axios.get('/nb/bits', { params }).then((response) => {
             return response.data;
         });

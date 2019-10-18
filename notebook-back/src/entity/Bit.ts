@@ -25,6 +25,9 @@ export class Bit {
     @Column({ default: null })
     class: number; // 类别
 
+    @Column({ default: false})
+    recom: boolean; // 推荐
+
     @Column({ default: '' })
     keyword: string;
 

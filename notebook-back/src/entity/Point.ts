@@ -20,6 +20,9 @@ export class Point {
     @Column({ default: null })
     attr: number;
 
+    @Column({ default: false})
+    recom: boolean;
+
     @Column({ default: '' })
     description: string;
 

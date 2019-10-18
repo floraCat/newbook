@@ -74,6 +74,11 @@
                                 @confirm="catalogTreeConfirm">
                                 <el-button size="mini" class="show" slot="reference" @click="catalogTreeClick(index)">转移</el-button>
                             </catalog-tree>
+                            <a href="javascript:;" size="mini" class="recom show fr"
+                                @click="recomHandle(index)">
+                                {{ item.recom ? '取消推荐' : '推荐'}}
+                            </a>
+                            <div class="status fr" :class="{ active: item.recom }"></div>
                         </div>
                         <p class="time">
                             <span> 创建：{{item.createdAt.slice(0, -5)}} </span>
@@ -399,6 +404,20 @@ export default {
                 });
             });
         },
+        // 推荐
+        recomHandle (index) {
+            this.currentIndex = index;
+            let item = this.dataList[index];
+            let params = {
+                id: item.id,
+                recom: !item.recom
+            };
+            this.$API.edit(params).then(() => {
+                let note = !item.recom ? '推荐成功' : '取消推荐成功';
+                this.$message.success(note);
+                this.$set(item, 'recom', !item.recom);
+            });
+        },
         // 点选分类回调
         catalogTreeConfirm (catId) {
             let params = {};
@@ -470,6 +489,19 @@ export default {
             .edit {
                 float: left;
                 margin: 0 10px;
+            }
+            .recom {
+                margin: 0 10px;
+            }
+            .status {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: #ccc;
+                margin-top: 8px;
+                &.active {
+                    background: $--primary-color;
+                }
             }
         }
         .time {

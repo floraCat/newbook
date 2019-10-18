@@ -35,7 +35,13 @@ export class LineController {
     }
 
     async list(request: Request, response: Response, next: NextFunction) {
-        let _where = `_filter.plane = ${request.query.plane}`;
+        let _where = '';
+        if (request.query.plane !== undefined) {
+            _where = `_filter.plane = ${request.query.plane}`;
+        }
+        if (request.query.recom !== undefined) {
+            _where = `_filter.recom = ${request.query.recom}`;
+        }
         return this.repository
             .createQueryBuilder('_filter')
             .where(_where)

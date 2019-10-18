@@ -113,7 +113,10 @@ export default {
             });
         },
         getSubList () {
-            this.$api.Bit.list(this.rowData.id).then(res => {
+            let params = {
+                point: this.rowData.id
+            };
+            this.$api.Bit.list(params).then(res => {
                 this.listData = res;
                 this.listData.map((x, i) => {
                     this.listData[i]['point'] = this.rowData.id;

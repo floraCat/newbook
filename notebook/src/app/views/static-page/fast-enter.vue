@@ -1,9 +1,9 @@
 <template>
     <div class="nb-fast-enter">
         <ol>
-            <h3>前端</h3>
+            <h3>颗粒</h3>
             <ul>
-                <a target="_blank" :href="getPath_frontend(2)">canvas画布</a>
+                <a v-for="(item, index) in bitList" :key="index">{{item.content}}</a>
             </ul>
         </ol>
     </div>
@@ -14,12 +14,34 @@ export default {
     name: 'nb-fast-enter',
     data () {
         return {
-            prePath: '/#/filter-list?solid=3&dimension=bit&showType=slider&keyword=&keywordFields=content&attrs=&sortField=updatedAt&sortType=DESC&playType=hand&playRate=&updatedAt&createdAt'
+            bitList: [],
+            pointList: [],
+            logList: []
         };
     },
+    mounted () {
+        this.getRecomBits();
+        this.getRecomPoints();
+        this.getRecomLogs();
+    },
     methods: {
-        getPath_frontend (id) {
-            return `${this.prePath}&cats={"isNull":false,"planes":[],"lines":[],"points":[${id}]}`;
+        getRecomBits () {
+            let params = { recom: true };
+            this.$api.Bit.list(params).then(res => {
+                this.bitList = res;
+            });
+        },
+        getRecomPoints () {
+            let params = { recom: true };
+            this.$api.Point.list(params).then(res => {
+                this.pointList = res;
+            });
+        },
+        getRecomLogs () {
+            let params = { recom: true };
+            this.$api.LogArticle.list(params).then(res => {
+                this.logList = res;
+            });
         }
     }
 

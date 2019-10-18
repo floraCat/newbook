@@ -4,8 +4,7 @@ export const Point = {
             return response.data;
         });
     },
-    list: function (lineId) {
-        let params = { line: lineId };
+    list: function (params) {
         return Axios.get('/nb/points', { params }).then((response) => {
             return response.data;
         });

@@ -86,7 +86,8 @@ export default {
             });
         },
         getSubList () {
-            this.$api.Point.list(this.rowData.id).then(res => {
+            let params = { line: this.rowData.id };
+            this.$api.Point.list(params).then(res => {
                 this.listData = res;
                 this.listData.map((x, i) => {
                     this.listData[i]['line'] = this.rowData.id;

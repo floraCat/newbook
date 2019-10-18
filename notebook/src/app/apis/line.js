@@ -4,8 +4,7 @@ export const Line = {
             return response.data;
         });
     },
-    list: function (planeId) {
-        let params = { plane: planeId };
+    list: function (params) {
         return Axios.get('/nb/lines', { params }).then((response) => {
             return response.data;
         });

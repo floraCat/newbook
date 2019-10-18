@@ -95,7 +95,7 @@ export default {
         },
         getSubList (index) {
             let topId = this.listData[index].id;
-            this.$api.Line.list(topId).then(res => {
+            this.$api.Line.list({plane: topId}).then(res => {
                 res.map((x, i) => {
                     res[i].plane = topId;
                 });

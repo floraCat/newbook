@@ -52,7 +52,13 @@ export class PointController {
     }
 
     async list(request: Request, response: Response, next: NextFunction) {
-        let _where = `_filter.line = ${request.query.line}`;
+        let _where = '';
+        if (request.query.line !== undefined) {
+            _where = `_filter.line = ${request.query.line}`;
+        }
+        if (request.query.recom !== undefined) {
+            _where = `_filter.recom = ${request.query.recom}`;
+        }
         return this.repository
             .createQueryBuilder('_filter')
             .where(_where)

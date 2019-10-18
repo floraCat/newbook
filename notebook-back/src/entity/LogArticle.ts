@@ -16,6 +16,9 @@ export class LogArticle {
     @Column({ default: null })
     class: number; // 类别
 
+    @Column({ default: false})
+    recom: boolean;
+
     @Column('text')
     content: string = '';
 

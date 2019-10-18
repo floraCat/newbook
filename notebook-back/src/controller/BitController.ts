@@ -39,7 +39,13 @@ export class BitController {
     }
 
     async list(request: Request, response: Response, next: NextFunction) {
-        let _where = `_filter.point = ${request.query.point}`;
+        let _where = '';
+        if (request.query.point !== undefined) {
+            _where = `_filter.point = ${request.query.point}`;
+        }
+        if (request.query.recom !== undefined) {
+            _where = `_filter.recom = ${request.query.recom}`;
+        }
         return this.repository
             .createQueryBuilder('_filter')
             .where(_where)
