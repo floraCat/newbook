@@ -2,21 +2,21 @@
   <div class="nb-list-point nb-list">
       <div class="list">
         <dl>
-            <dt class="hover-show-btns">
+            <dt class="nb-btns">
                 {{rowData.title}}
                 <div class="btns">
                     <el-button size="mini" @click="rowMod">编辑</el-button>
                     <el-button size="mini" @click="rowDel">删除</el-button>
-                    <el-button size="mini" @click="rowAddChild" class="show">新增子条目/bit</el-button>
-                    <el-button size="mini" class="show"><router-link :to="{ name: 'Index' }">首页</router-link></el-button>
-                    <el-button size="mini" class="show">
+                    <el-button size="mini" @click="rowAddChild">新增子条目/bit</el-button>
+                    <el-button size="mini"><router-link :to="{ name: 'Index' }">首页</router-link></el-button>
+                    <el-button size="mini">
                         <router-link :to="{ name: 'ToBit', query: { pid: rowData.id} }">颗粒拆分</router-link>
                     </el-button>
                 </div>
             </dt>
             <dd>
                 <template v-for="(bit, index2) in listData">
-                    <section class="hover-show-btns" :key="index2">
+                    <section class="nb-btns" :key="index2">
                         <div v-if="bit.title" v-text="bit.title"></div>
                         <div v-if="!bit.title" v-html="bit.content"></div>
                         <div class="btns">
@@ -32,7 +32,7 @@
                                 selectType="single"
                                 dimension="bit"
                                 @confirm="catalogTreeConfirm">
-                                <el-button class="show" size="mini" slot="reference" @click="catalogTreeClick(index2)">转移</el-button>
+                                <el-button size="mini" slot="reference" @click="catalogTreeClick(index2)">转移</el-button>
                             </catalog-tree>
                         </div>
                     </section>

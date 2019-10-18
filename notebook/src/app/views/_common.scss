@@ -25,21 +25,21 @@
             margin: 0 5px 0 0;
         }
     }
-    .hover-show-btns {
+    .nb-btns {
         position: relative;
         .el-button {
-            display: none;
+            // display: none;
             border: none;
             background: #f8f8f8;
-            &.show {
-                display: block;
-            }
+            // &.show {
+            //     display: block;
+            // }
         }
-        &:hover {
-            .el-button {
-                display: block;
-            }
-        }
+        // &:hover {
+        //     .el-button {
+        //         display: block;
+        //     }
+        // }
     }
     .list {
         padding: 20px 20px 0;

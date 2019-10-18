@@ -2,25 +2,25 @@
   <div class="nb-list-point nb-list">
       <div class="list">
         <dl>
-            <dt class="hover-show-btns">
+            <dt class="nb-btns">
                 {{rowData.title}}
                 <div class="btns">
                     <el-button size="mini" @click="rowMod">编辑</el-button>
                     <el-button size="mini" @click="rowDel">删除</el-button>
-                    <el-button size="mini" @click="rowAddChild" class="show">新增子条目/point</el-button>
-                    <el-button size="mini" class="show"><router-link :to="{ name: 'Index' }">首页</router-link></el-button>
+                    <el-button size="mini" @click="rowAddChild">新增子条目/point</el-button>
+                    <el-button size="mini"><router-link :to="{ name: 'Index' }">首页</router-link></el-button>
                 </div>
             </dt>
             <dd>
                 <template v-for="(point, index2) in listData">
-                    <li class="hover-show-btns" :key="index2">
-                        <router-link target="_blank" :to="{ name: 'ListBit', query: { pid:point.id, solid: $route.query.solid } }">
+                    <li class="nb-btns" :key="index2">
+                        <router-link :to="{ name: 'ListBit', query: { pid:point.id, solid: $route.query.solid } }">
                             {{point.title}}
                         </router-link>
                         <div class="btns">
                             <el-button size="mini" @click="listDel(index2)">删除</el-button>
-                            <el-button class="show" size="mini" @click="sortFirst(index2)">前置</el-button>
-                            <el-button class="show" size="mini" @click="sortLast(index2)">后置</el-button>
+                            <el-button size="mini" @click="sortFirst(index2)">前置</el-button>
+                            <el-button size="mini" @click="sortLast(index2)">后置</el-button>
                         </div>
                     </li>
                 </template>

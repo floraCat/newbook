@@ -14,7 +14,7 @@
         <div class="list">
             <dl>
                 <dd v-for="(item, index) in dataList" :key="index">
-                    <section class="hover-show-btns">
+                    <section class="nb-btns">
                         <div class="btns">
                             <el-button size="mini" @click="editHandle(index)">编辑</el-button>
                             <!--catalog-tree-->
@@ -24,7 +24,7 @@
                                 selectType="single"
                                 :dimension="dimension"
                                 @confirm="catalogTreeConfirm">
-                                <el-button size="mini" class="show" slot="reference" @click="catalogTreeClick(index)">转移</el-button>
+                                <el-button size="mini" slot="reference" @click="catalogTreeClick(index)">转移</el-button>
                             </catalog-tree>
                         </div>
                         <template v-if="$route.query.dimension === 'bit'">

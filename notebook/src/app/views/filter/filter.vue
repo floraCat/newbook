@@ -236,7 +236,6 @@ export default {
                 name: 'FilterList',
                 query: data
             });
-            window.open(href, '_blank');
         }
     }
 }

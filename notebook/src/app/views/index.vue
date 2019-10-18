@@ -1,18 +1,18 @@
 <template>
     <div class="nb-index">
         <ol class="layout2">
-            <router-link target="_blank" :to="{name: 'ListLine', query: { solid: 1 }}">技术</router-link>
-            <router-link target="_blank" :to="{name: 'ListLine', query: { solid: 2 }}">生活</router-link>
+            <router-link :to="{name: 'ListLine', query: { solid: 1 }}">技术</router-link>
+            <router-link :to="{name: 'ListLine', query: { solid: 2 }}">生活</router-link>
         </ol>
         <ol class="layout2">
-            <router-link target="_blank" :to="{name: 'ListLine', query: { solid: 3 }}">卡片</router-link>
-            <router-link target="_blank" :to="{name: 'LogList', query: { topic: 1 }}">日志</router-link>
+            <router-link :to="{name: 'ListLine', query: { solid: 3 }}">卡片</router-link>
+            <router-link :to="{name: 'LogList', query: { topic: 1 }}">日志</router-link>
         </ol>
         <ol class="layout1">
-            <router-link target="_blank" :to="{name: 'Filter', query: { solid: 1 }}">Filter</router-link>
+            <router-link :to="{name: 'Filter', query: { solid: 1 }}">Filter</router-link>
         </ol>
         <ol class="layout1">
-            <router-link target="_blank" :to="{
+            <router-link :to="{
                 name: 'FilterList',
                 query: { 
                     showType: 'list',
@@ -29,7 +29,7 @@
             <a href="javascript:;" @click="addVisible = true">
                 添加颗粒
             </a>
-            <router-link target="_blank" :to="{
+            <router-link :to="{
                 name: 'FilterList', 
                 query: { 
                     showType: 'list',
@@ -41,23 +41,23 @@
             </router-link>
         </ol>
         <ol class="layout2">
-            <router-link target="_blank" :to="{name: 'FastEnter' }">
+            <router-link :to="{name: 'FastEnter' }">
                 快捷入口
             </router-link>
-            <router-link target="_blank" :to="{name: 'LocalSource' }">
+            <router-link :to="{name: 'LocalSource' }">
                 本地资源
             </router-link>
         </ol>
         <div class="review">
             <h3>新建颗粒复习 :</h3>
             <ol class="layout3">
-                <router-link target="_blank" :to="{name: 'FilterList', query: { showType: 'slider', createdAt: timeRange.today } }">
+                <router-link :to="{name: 'FilterList', query: { showType: 'slider', createdAt: timeRange.today } }">
                     今天
                 </router-link>
-                <router-link target="_blank" :to="{name: 'FilterList', query: { showType: 'slider', createdAt: timeRange.yestoday } }">
+                <router-link :to="{name: 'FilterList', query: { showType: 'slider', createdAt: timeRange.yestoday } }">
                     昨天
                 </router-link>
-                <router-link target="_blank" :to="{name: 'FilterList', query: { showType: 'slider', createdAt: timeRange.beforeOneWeek } }">
+                <router-link :to="{name: 'FilterList', query: { showType: 'slider', createdAt: timeRange.beforeOneWeek } }">
                     七天前
                 </router-link>
             </ol>

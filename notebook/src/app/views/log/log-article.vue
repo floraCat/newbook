@@ -1,7 +1,7 @@
 <template>
     <div class="nb-log-article nb-list">
         <dl>
-            <dt class="hover-show-btns">
+            <dt class="nb-btns">
                 <p style="height: 40px;">{{rowData.title}}</p>
                 <div class="btns">
                     <el-button size="mini" @click="rowMod">编辑</el-button>

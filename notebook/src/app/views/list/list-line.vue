@@ -11,7 +11,7 @@
         </div>
         <div class="list">
             <dl v-for="(plane, index) in listData" :key="index">
-                <dt class="hover-show-btns">
+                <dt class="nb-btns">
                     {{plane.title}}
                     <div class="btns">
                         <el-button size="mini" @click="listMod(index)">编辑</el-button>
@@ -133,7 +133,7 @@ export default {
                 name: 'ListPoint',
                 query: { pid:pid, solid: this.$route.query.solid }
             });
-            window.open(href, '_blank');
+            window.open(href, '_self');
         },
         // 编辑完成后回调
         listEditConfirm (params) {
