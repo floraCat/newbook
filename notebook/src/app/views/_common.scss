@@ -1,4 +1,6 @@
 .nb-list {
+    width: 960px;
+    margin: 0 auto;
     .header {
         position: relative;
         height: 50px;
@@ -28,18 +30,9 @@
     .nb-btns {
         position: relative;
         .el-button {
-            // display: none;
             border: none;
             background: #f8f8f8;
-            // &.show {
-            //     display: block;
-            // }
         }
-        // &:hover {
-        //     .el-button {
-        //         display: block;
-        //     }
-        // }
     }
     .list {
         padding: 20px 20px 0;
@@ -90,13 +83,10 @@
 // 弹窗样式
 .nb-dialog {
     .el-dialog {
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        right: 8px;
-        bottom: 8px;
-        margin: 0!important;
-        width: auto;
+        width: 98%;
+        max-width: 940px;
+        height: 96%;
+        margin: 1% auto!important;
     }
     .el-dialog__header {
         padding: 10px;

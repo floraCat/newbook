@@ -13,6 +13,9 @@ createConnection().then(async connection => {
     app.use(bodyParser.json());
 
     // register express routes from defined application routes
+    Routes.map(x => {
+        x.route = `/nb${x.route}`;
+    });
     Routes.forEach(route => {
         (app as any)[route.method](route.route, (req: Request, res: Response, next: Function) => {
             const result = (new (route.controller as any))[route.action](req, res, next);
@@ -29,7 +32,7 @@ createConnection().then(async connection => {
     // ...
 
     // start express server
-    app.listen(3001);
+    app.listen(8077);
 
     // insert new users for test
     // await connection.manager.save(connection.manager.create(User, {
@@ -42,6 +45,6 @@ createConnection().then(async connection => {
     //     age: 24
     // }));
 
-    console.log("Express server has started on port 3000. Open http://localhost:3001 to see results");
+    console.log("Express server has started on port 8077.");
 
 }).catch(error => console.log(error));

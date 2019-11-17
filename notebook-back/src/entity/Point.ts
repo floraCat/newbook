@@ -8,8 +8,8 @@ export class Point {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ default: '' })
-    pid: string;
+    // @Column({ default: '' })
+    // pid: string;
 
     @Column({ default: 0 })
     sort: number;
@@ -29,8 +29,8 @@ export class Point {
     @Column('text')
     extend: string;
 
-    @Column({ default: '' })
-    subFieldSet: string;
+    @Column('text')
+    subFieldSetting: string;
 
     @Column({ default: '' })
     createdAt: string;

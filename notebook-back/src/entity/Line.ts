@@ -8,14 +8,17 @@ export class Line {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ default: '' })
-    pid: string;
+    // @Column({ default: '' })
+    // pid: string;
 
     @Column({ default: 0 })
     sort: number;
 
     @Column({ default: '' })
     title: string;
+
+    @Column({ default: false})
+    recom: boolean;
 
     @Column({ default: '' })
     description: string;

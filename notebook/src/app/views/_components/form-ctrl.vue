@@ -1,3 +1,8 @@
+<docs>
+# 表单控件
+- 判断 type 渲染对应类型的表单控件
+</docs>
+
 <template>
     <el-form-item class="nb-form-ctrl" :label="`${fieldConfig.label}：`">
         <!--input-->
@@ -44,10 +49,11 @@
         <!--catalog-tree-->
         <template v-if="type === 'catalog-tree'">
             <catalog-tree
+                :visible="visibleCatalogTree"
                 selectType="single"
                 :dimension="dataKey"
                 @confirm="getCatalog">
-                <el-input slot="reference" v-model="data[pid]" placeholder="点击选择分类" />
+                <el-input slot="reference" v-model="catalogTreeLabel" placeholder="点击选择分类" />
             </catalog-tree>
         </template>
         <!--editor-->
@@ -62,6 +68,7 @@
 
 <script>
 import VueFroala from 'vue-froala-wysiwyg'; // 富文本编辑器
+import { GetPlane } from '@views/_methods';
 export default {
     name: 'nb-form-ctrl',
     props: [ 'fieldConfig', 'data', 'action', 'dataKey' ],
@@ -75,7 +82,9 @@ export default {
                         console.log('initialized')
                     }
                 }
-            }
+            },
+
+            visibleCatalogTree: false
         };
     },
     computed: {
@@ -87,16 +96,35 @@ export default {
             if (this.dataKey === 'point') { rs = 'line'; }
             if (this.dataKey === 'line') { rs = 'plane'; }
             return rs;
+        },
+        // 分类下拉 显示成 ‘id | text’
+        catalogTreeLabel () {
+            let rs = null;
+            if (this.type === 'catalog-tree') {
+                rs = this.data[this.pid] && `${this.data[this.pid].id} | ${this.data[this.pid].title}`;
+            }
+            return rs;
         }
     },
     mounted () {
+        this.init();
     },
     methods: {
+        async init () {
+            // 分类下拉渲染前先获取所有planes
+            if (this.type === 'catalog-tree') {
+                if (this.$store.state.planes.length <= 0) {
+                    let planes = await GetPlane(this);
+                    this.$store.commit('planes', planes);
+                }
+                this.visibleCatalogTree = true;
+            }
+        },
         disabledActive (config) {
             return (this.action === 'add' && config.special && config.special.disabledCtrlAdd) ||
                 (this.action === 'mod' && config.special && config.special.disabledCtrlMod);
         },
-        // 拿到分类
+        // 分类下拉 回调
         getCatalog (val) {
             this.$set(this.data, this.pid, val);
         }

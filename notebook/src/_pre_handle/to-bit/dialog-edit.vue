@@ -59,6 +59,7 @@ export default {
         }
         this.$api.Bit.edit(params).then(res => {
             this.$message.success('保存成功');
+            this.close();
         });
     }
   }

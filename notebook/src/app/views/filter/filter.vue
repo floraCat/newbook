@@ -1,13 +1,16 @@
 <template>
     <div class="nb-filter-setting">
-        <section class="nb-search-radio pl" v-if="searchOpts.solid && searchOpts.solid !== 100">
+        <div class="tabs">
+            <a href="javascript:;" :class="{active: tabActive === 'plane'}" @click="tabSwitch('plane')">点线面</a>
+            <a href="javascript:;" :class="{active: tabActive === 'log'}" @click="tabSwitch('log')">日志</a>
+        </div>
+        <section class="nb-search-radio pl" v-if="tabActive === 'plane' && searchOpts.solid && searchOpts.solid !== 100">
             <label class="label">筛选维度：</label>
             <el-radio v-model="searchOpts.dimension" label="point">点</el-radio>
             <el-radio v-model="searchOpts.dimension" label="bit">颗粒</el-radio>
         </section>
         <section class="nb-search-radio pl">
             <label class="label">展示方式：</label>
-            <el-radio v-model="searchOpts.showType" label="list">列表</el-radio>
             <el-radio v-model="searchOpts.showType" label="slider">轮播</el-radio>
             <el-radio v-model="searchOpts.showType" label="grid">看板</el-radio>
         </section>
@@ -25,22 +28,18 @@
                 </el-option>
             </el-select>
         </section>
-        <!--solid-->
-        <section class="nb-search-radio pl">
+        <!--主题-->
+        <section class="nb-search-radio pl" v-if="tabActive === 'plane'">
             <label class="label">主题：</label>
-            <el-radio v-model="searchOpts.solid" @change="switchTopic(0)" :label="Number(0)">全部</el-radio>
-            <el-radio v-model="searchOpts.solid" @change="switchTopic(100)" :label="Number(100)">日志</el-radio>
-        </section>
-        <section class="nb-search-radio pl">
-            <label class="label"></label>
             <el-radio v-model="searchOpts.solid" @change="switchTopic(1)" :label="Number(1)">技术</el-radio>
             <el-radio v-model="searchOpts.solid" @change="switchTopic(2)" :label="Number(2)">生活</el-radio>
             <el-radio v-model="searchOpts.solid" @change="switchTopic(3)" :label="Number(3)">卡片</el-radio>
         </section>
         <!--分类-->
-        <section class="nb-search-dropdown pl pr" v-if="searchOpts.solid && searchOpts.solid !== 100">
+        <section class="nb-search-dropdown pl pr" v-if="tabActive === 'plane' && searchOpts.solid && searchOpts.solid !== 100">
             <label class="label">分类：</label>
             <catalog-tree
+                :visible="catalogTreeVisible"
                 :dimension="searchOpts.dimension"
                 selectType="multi"
                 @confirm="getsearchCats">
@@ -49,7 +48,7 @@
             <el-checkbox class="exclude" v-model="exclude">排除</el-checkbox>
         </section>
         <!--属性-->
-        <section class="nb-search-dropdown pl pr">
+        <section class="nb-search-dropdown pl pr" v-if="tabActive === 'plane'">
             <label class="label">属性：</label>
             <el-select size="mini" v-model="searchOpts.attrs" multiple collapse-tags placeholder="选择属性(多选)">
                 <el-option
@@ -121,20 +120,28 @@
                 end-placeholder="结束日期">
             </el-date-picker>
         </section>
-        <el-button size="small" @click="confirm">确定</el-button>
+        <div class="btn-btm">
+            <router-link class="fl" :to="{ name: 'Index' }">返回首页</router-link>
+            <el-button class="fr" type="primary" size="small" @click="confirm">确定</el-button>
+        </div>
     </div>
 </template>
 
 <script>
 import { AttrOpts, DropdownOpts, FilterDefaultVals } from '@configs/options';
+import { GetPlane } from '../_methods';
 import moment from 'moment';
 export default {
     name: 'nb-filter-setting',
     data() {
         return {
+            tabActive: 'plane', // or 'log'
+
             // 默认值
             searchOpts: {},
-            dropdownOpts: DropdownOpts,
+            dropdownOpts: _.cloneDeep(DropdownOpts),
+            
+            catalogTreeVisible: false,
             catsShowTxt: '', // 分类展示文本
             exclude: false,
 
@@ -172,14 +179,18 @@ export default {
         'searchOpts.dimension' (val) {
             if (val === 'bit') {
                 this.searchOpts.keywordFields = ['content'];
-                DropdownOpts.Fields = DropdownOpts.FieldsBit;
-                DropdownOpts.cats = '';
+                this.dropdownOpts.Fields = DropdownOpts.FieldsBit;
+                this.dropdownOpts.cats = '';
                 this.catsShowTxt = '';
-            }
-            if (val === 'point') {
+            } else if (val === 'point') {
                 this.searchOpts.keywordFields = ['title'];
-                DropdownOpts.Fields = DropdownOpts.FieldsPoint;
-                DropdownOpts.cats = '';
+                this.dropdownOpts.Fields = DropdownOpts.FieldsPoint;
+                this.dropdownOpts.cats = '';
+                this.catsShowTxt = '';
+            } else {
+                this.searchOpts.keywordFields = ['content'];
+                this.dropdownOpts.Fields = DropdownOpts.FieldsLog;
+                this.dropdownOpts.cats = '';
                 this.catsShowTxt = '';
             }
         },
@@ -195,14 +206,31 @@ export default {
             this.searchOpts = _.cloneDeep(FilterDefaultVals);
             this.searchOpts.solid = parseInt(this.$route.query.solid);
             this.catsShowTxt = '';
+            this.initCatalogTree();
+        },
+        // 初始化分类下拉
+        async initCatalogTree () {
+            if (this.$store.state.planes.length <= 0) {
+                let planes = await GetPlane(this);
+                this.$store.commit('planes', planes);
+            }
+            this.catalogTreeVisible = true;
+        },
+        tabSwitch (type) {
+            this.tabActive = type;
+            if (type === 'log') { this.searchOpts.dimension = ''; }
+            else { this.searchOpts = _.cloneDeep(FilterDefaultVals); }
         },
         // input的输入建议
         playRateList(queryString, cb) {
-            cb(DropdownOpts.PlayRates);
+            cb(this.dropdownOpts.PlayRates);
         },
         // 切换主题
         switchTopic (id) {
             this.$router.push({ name: 'Filter', query: { solid: id }});
+            this.$store.commit('planes', []);
+            this.catalogTreeVisible = false;
+            this.initCatalogTree();
         },
         // 获取勾选的分类
         getsearchCats (returnData) {
@@ -228,7 +256,6 @@ export default {
                     data[key] = data[key].join(',');
                 }
             }
-            console.log(1111, data);
             if (data.solid === 100) {
                 data.dimension = '';
             }
@@ -236,6 +263,7 @@ export default {
                 name: 'FilterList',
                 query: data
             });
+            window.open(href);
         }
     }
 }
@@ -243,12 +271,34 @@ export default {
 
 <style lang="scss">
     .nb-filter-setting {
+        position: relative;
         width: 355px;
         margin: 10px auto;
         border: #eee 1px solid;
-        padding: 12px;
+        padding: 50px 12px 12px 12px;
         border-radius: 5px;
         overflow: hidden;
+
+        .tabs {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height:32px;
+            line-height: 32px;
+            overflow: hidden;
+            border-bottom: #ddd 1px solid;
+            background: #f8f8f8;
+            a {
+                float: left;
+                width: 50%;
+                text-align: center;
+                &.active {
+                    color: #fff;
+                    background: $--primary-color;
+                }
+            }
+        }
 
         section {
             position: relative;

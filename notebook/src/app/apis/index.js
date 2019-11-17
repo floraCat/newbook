@@ -9,7 +9,7 @@ import { LogArticle } from './log-article';
 let Common = {
     // 筛选
     filter: function (params) {
-        return Axios.get('/nb/filter', { params }).then((response) => {
+        return Axios.get(`${$prePath}/filter`, { params }).then((response) => {
             return response.data;
         });
     }

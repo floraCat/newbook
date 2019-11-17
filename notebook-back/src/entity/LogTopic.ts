@@ -7,8 +7,8 @@ export class LogTopic {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ default: '' })
-    pid: string;
+    // @Column({ default: '' })
+    // pid: string;
 
     @Column({ default: 0 })
     sort: number;

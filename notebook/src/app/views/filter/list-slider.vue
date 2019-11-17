@@ -10,6 +10,8 @@
             :total="total">
         </el-pagination>
 
+        <el-button style="position: absolute; top: 10px; right: 10px; z-index: 999;" size="mini"><router-link :to="{ name: 'Index' }">首页</router-link></el-button>
+
         <div class="list">
             <dl>
                 <dd v-for="(item, index) in dataList" :key="index">
@@ -17,26 +19,27 @@
                         <div class="btns">
                             <el-button size="mini" @click="swiperPop(index)">展示</el-button>
                             <el-button size="mini" @click="editHandle(index)">编辑</el-button>
-                            <!--catalog-tree-->
+                            <el-button size="mini" @click="delHandle(index)">删除</el-button>
                             <catalog-tree
                                 class="fr"
                                 :visible="catalogTreeVisible"
                                 selectType="single"
                                 :dimension="dimension"
                                 @confirm="catalogTreeConfirm">
-                                <el-button size="mini" slot="reference" @click="catalogTreeClick(index)">转移</el-button>
+                                <el-button size="mini" v-if="dimension !== 'log'" slot="reference" @click="catalogTreeClick(index)">转移</el-button>
                             </catalog-tree>
                         </div>
                         <template v-if="$route.query.dimension === 'bit'">
-                            <h4 v-if="item.title">{{item.title}}</h4>
+                            <h4 v-if="item.isShowObj.title">{{item.title}}</h4>
                             <div class="info2" style="background: #eee;">
                                 <span>createdAt : {{item.createdAt}}</span> | 
                                 <span>updatedAt : {{item.updatedAt}}</span>
                             </div>
                             <div v-html="item.content"></div>
                         </template>
+                        <!--point 时展示 bit列表-->
                         <template v-else-if="$route.query.dimension === 'point'">
-                            <h4>{{item.title}}</h4>
+                            <h4 v-if="item.isShowObj.title">{{item.title}}</h4>
                             <div class="bits">
                                 <template v-for="(bit, index) in item.bits">
                                     <span :key="bit.id" v-if="index <= 5">
@@ -47,9 +50,10 @@
                                 <p v-if="item.bits.length > 5">......</p>
                             </div>
                         </template>
+                        <!--其他 展示 content-->
                         <template v-else>
-                            <h4 v-if="item.title">{{item.title}}</h4>
-                            <div v-if="!item.title" v-html="item.content"></div>
+                            <h4 v-if="item.isShowObj.title">{{item.title}}</h4>
+                            <div v-html="item.content"></div>
                         </template>
                     </section>
                 </dd>
@@ -57,72 +61,77 @@
         </div>
 
         <div class="mask" v-show="visibleSwiper"></div>
-        <div class="swiper" v-show="visibleSwiper">
-            <a href="javascript:;" class="close el-icon-circle-close" @click="visibleSwiper = false"></a>
-            <div class="swiper-container">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide" v-for="(item, index) in dataList" :key="index">
-                        <div class="head">
-                            <h4>{{item.title}}</h4>
-                            <a class="edit" href="javascript:;" @click="editHandle(index)">编辑</a>
-                            <!--catalog-tree-->
-                            <catalog-tree
-                                class="fr"
-                                :visible="catalogTreeVisible"
-                                selectType="single"
-                                :dimension="dimension"
-                                @confirm="catalogTreeConfirm">
-                                <el-button size="mini" slot="reference" @click="catalogTreeClick(index)">转移</el-button>
-                            </catalog-tree>
-                            <a href="javascript:;" size="mini" class="recom show fr"
-                                @click="recomHandle(index)">
-                                {{ item.recom ? '取消推荐' : '推荐'}}
-                            </a>
-                            <div class="status fr" :class="{ active: item.recom }"></div>
+        <div class="nb-swiper-wrap" v-show="visibleSwiper">
+            <div class="nb-swiper">
+                <a href="javascript:;" class="close el-icon-circle-close" @click="visibleSwiper = false"></a>
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide" v-for="(item, index) in dataList" :key="index">
+                            <div class="head">
+                                <h4 v-if="item.isShowObj.title">{{item.title}}</h4>
+                                <catalog-tree
+                                    class="fr"
+                                    :visible="catalogTreeVisible"
+                                    selectType="single"
+                                    :dimension="dimension"
+                                    @confirm="catalogTreeConfirm">
+                                    <el-button size="mini" v-if="dimension !== 'log'" slot="reference" @click="catalogTreeClick(index)">转移</el-button>
+                                </catalog-tree>
+                                <a href="javascript:;" size="mini" class="recom fr"
+                                    @click="recomHandle(index)">
+                                    {{ item.recom ? '取消推荐' : '推荐'}}
+                                </a>
+                                <div class="status fr" :class="{ active: item.recom }"></div>
+                                <a class="del fr" href="javascript:;" @click="delHandle(index)">删除</a>
+                                <a class="edit fr" href="javascript:;" @click="editHandle(index)">编辑</a>
+                            </div>
+                            <p class="time">
+                                <span> 创建：{{item.createdAt.slice(0, -5)}} </span>
+                                <span> 更新：{{item.updatedAt.slice(0, -5)}} </span>
+                            </p>
+                            <div class="info">
+                                <span v-if="item.isShowObj.cats"><label>分类：</label>{{item.cats}}</span>
+                                <span v-if="item.isShowObj.attr"><label>属性：</label>{{item.attr | attrDict(attrOpts)}}</span>
+                                <span><label>排序：</label>{{item.sort}}</span>
+                            </div>
+                            <!--测试 返回字段值 是否正确 -->
+                            <div class="info2">
+                                <span>subtitle : {{item.subtitle}}</span> | 
+                                <span>sort : {{item.sort}}</span> | 
+                                <span>attr : {{item.attr}}</span> | 
+                                <span>grade : {{item.grade}}</span> | 
+                                <span>class : {{item.class}}</span> | 
+                                <span>keyword : {{item.keyword}}</span> | 
+                                <span>pic : {{item.pic}}</span> | 
+                                <span>audio : {{item.audio}}</span> | 
+                                <span>video : {{item.video}}</span> | 
+                                <span>createdAt : {{item.createdAt}}</span> | 
+                                <span>updatedAt : {{item.updatedAt}}</span> | 
+                                <span>point : {{item.point && item.point.id}}</span>
+                            </div>
+                            <div class="desc" v-if="item.isShowObj.description">
+                                {{item.description}}
+                            </div>
+                            <div class="content">
+                                <!--point 时展示 bit列表-->
+                                <template v-if="dimension === 'point'">
+                                    <ul>
+                                        <li v-for="bit in item.bits" :key="bit.id">
+                                            {{bit.title}}
+                                            <div v-html="item.content"></div>
+                                        </li>
+                                    </ul>
+                                </template>
+                                <!--其他 展示 content-->
+                                <template v-else>
+                                    <div v-html="item.content"></div>
+                                </template>
+                            </div>
                         </div>
-                        <p class="time">
-                            <span> 创建：{{item.createdAt.slice(0, -5)}} </span>
-                            <span> 更新：{{item.updatedAt.slice(0, -5)}} </span>
-                        </p>
-                        <div class="info">
-                            <span><label>分类：</label>{{item.cats}}</span>
-                            <span><label>属性：</label>{{item.attr | attrDict(attrOpts)}}</span>
-                            <span><label>排序：</label>{{item.sort}}</span>
-                        </div>
-                        <div class="info2">
-                            <span>subtitle : {{item.subtitle}}</span> | 
-                            <span>sort : {{item.sort}}</span> | 
-                            <span>attr : {{item.attr}}</span> | 
-                            <span>grade : {{item.grade}}</span> | 
-                            <span>class : {{item.class}}</span> | 
-                            <span>keyword : {{item.keyword}}</span> | 
-                            <span>pic : {{item.pic}}</span> | 
-                            <span>audio : {{item.audio}}</span> | 
-                            <span>video : {{item.video}}</span> | 
-                            <span>createdAt : {{item.createdAt}}</span> | 
-                            <span>updatedAt : {{item.updatedAt}}</span> | 
-                            <span>point : {{item.point && item.point.id}}</span>
-                        </div>
-                        <div class="desc">
-                            {{item.description}}
-                        </div>
-                        <div class="content">
-                            <template v-if="dimension === 'bit'">
-                                <div v-html="item.content"></div>
-                            </template>
-                            <template v-if="dimension === 'point'">
-                                <ul>
-                                    <li v-for="bit in item.bits" :key="bit.id">
-                                        {{bit.title}}
-                                        <div v-html="item.content"></div>
-                                    </li>
-                                </ul>
-                            </template>
-                        </div>
-                    </div>
-                </div>		    
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
+                    </div>		    
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-button-next"></div>
+                </div>
             </div>
         </div>
 
@@ -131,7 +140,7 @@
             v-if="rowEditVisible"
             :visible="rowEditVisible"
             action="mod"
-            :dataKey="params.dimension"
+            :dataKey="dimension"
             :data="dataList[currentIndex]"
             @close="rowEditVisible = false"
             @confirm="rowEditConfirm"
@@ -144,12 +153,14 @@
 import { AttrOpts } from '@configs/options';
 import Swiper from 'swiper';
 import DialogEdit from '../_components/dialog-edit';
+import { GetPlane, MapGetShowObj } from '../_methods';
 export default {
     name: 'filter-list-slider',
     props: [ 'params' ],
     components: {
         DialogEdit
     },
+    inject: [ 'FieldSettingMode1' ],
     data () {
         return {
             mySwiper: null,
@@ -172,10 +183,13 @@ export default {
     },
     computed: {
         dimension () {
-            return this.params.dimension;
+            return this.params.dimension || 'log';
         },
         $API () {
-            let rs = this.$api.Bit;
+            let rs = this.$api.LogArticle;
+            if (this.dimension === 'bit') {
+                rs = this.$api.Bit;
+            }
             if (this.dimension === 'point') {
                 rs = this.$api.Point;
             }
@@ -206,6 +220,12 @@ export default {
                 params.pageNum = this.pageNum;
                 this.$api.Common.filter(params).then(res => {
                     this.dataList = res.list;
+                    this.dataList.map((x, i) => {
+                        if (x.point && x.point.subFieldSetting) {
+                            this.dataList[i].point.subFieldSetting = JSON.parse(x.point.subFieldSetting);
+                        }
+                    });
+                    this.dataList = MapGetShowObj(this.dataList, this.FieldSettingMode1);
                     this.total = res.total;
                     resolve();
                 });
@@ -365,6 +385,15 @@ export default {
             this.pageNum = pageNum;
             this.getList();
         },
+        delHandle (index) {
+            this.$confirm('确定要删除此条目吗？').then(() => {
+                let params = { ids: [this.dataList[index].id].join(',') };
+                this.$API.del(params).then(() => {
+                    this.$message.success('删除成功');
+                    this.dataList.splice(index, 1);
+                });
+            }).catch(() => {});
+        },
         editHandle (index) {
             this.currentIndex = index;
             this.rowEditVisible = true;
@@ -380,29 +409,12 @@ export default {
         // 点击分类下拉
         async catalogTreeClick (index) {
             if (this.$store.state.planes.length <= 0) {
-                let planes = await this.getPlane();
+                // 下拉分类前先加载所有plane(如放在下拉分类组件内加载列表会多次请求)
+                let planes = await GetPlane();
                 this.$store.commit('planes', planes);
             }
             this.catalogTreeVisible = true;
             this.currentIndex = index;
-        },
-        // 下拉分类前先加载所有plane(如放在下拉分类组件内加载列表会多次请求)
-        getPlane () {
-            return new Promise(resolve => {
-                let params = {
-                    solid: this.$route.query.solid
-                };
-                this.$api.Plane.list(params).then(res => {
-                    let list = res;
-                    list.map(x => {
-                        x.top = true;
-                        if (this.dimension === 'line') {
-                            x.leaf = true;
-                        }
-                    });
-                    resolve(list);
-                });
-            });
         },
         // 推荐
         recomHandle (index) {
@@ -454,12 +466,19 @@ export default {
         background: #333;
         opacity: .4;
     }
-    .swiper {
+    .nb-swiper-wrap {
         position: fixed;
-        top: 8px;
-        left: 8px;
-        bottom: 8px;
-        right: 8px;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .nb-swiper {
+        position: relative;
+        width: 100%;
+        max-width: 960px;
+        height:97%;
+        margin: 1% auto;
         border-radius: 6px;
         padding: 20px 20px;
         background: #f6f6f6;
@@ -485,10 +504,16 @@ export default {
             h4 {
                 float: left;
                 font-size: 14px;
+                font-weight: bold;
             }
             .edit {
-                float: left;
                 margin: 0 10px;
+            }
+            .del {
+                padding: 0 10px;
+                margin: 0 10px;
+                border-left: #ddd 1px solid;
+                border-right: #ddd 1px solid;
             }
             .recom {
                 margin: 0 10px;

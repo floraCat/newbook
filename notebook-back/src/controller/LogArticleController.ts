@@ -40,7 +40,13 @@ export class LogArticleController {
         let start = (pageNum - 1) * pageSize;
         let end = start + pageSize;
         let entity = await this.repository.createQueryBuilder('_filter');
-        let _where = `_filter.topic = ${request.query.topic}`;
+        let _where = '';
+        if (request.query.topic !== undefined) {
+            _where = `_filter.topic = ${request.query.topic}`;
+        }
+        if (request.query.recom !== undefined) {
+            _where = `_filter.recom = ${request.query.recom}`;
+        }
         let all = await entity
             .leftJoinAndSelect('_filter.topic', 'topic')
             .where(_where)

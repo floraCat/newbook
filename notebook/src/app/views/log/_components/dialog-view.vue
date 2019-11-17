@@ -3,9 +3,9 @@
         class="nb-view-dialog nb-dialog"
         title="查看详情"
         :visible.sync="dialogVisible">
-        <router-link class="link" target="_blank" :to="{ name: 'LogArticle', query: { id: viewRow.id } }">打开详情页</router-link>
+        <router-link class="link" target="_blank" :to="{ name: 'LogArticle', query: { id: viewRow.id, topic: $route.query.topic } }">打开详情页</router-link>
         <ul>
-            <li v-for="(field) in FieldConfig" :key="field.key">
+            <li v-for="(field) in LogArticleFieldConfig" :key="field.key">
                 <label>{{field.label}} :</label>
                 <div class="content" v-html="viewRow[field.key]"></div>
             </li>
@@ -17,13 +17,13 @@
 </template>
 
 <script>
-import { FieldConfig } from './_config';
+import { LogArticleFieldConfig } from '../../_components/_config';
 export default {
     name: 'edit-plane',
     props: [ 'visible', 'data' ],
     data () {
         return {
-            FieldConfig,
+            LogArticleFieldConfig,
             viewRow: {}
         };
     },

@@ -7,6 +7,13 @@
                 <div class="btns">
                     <el-button size="mini" @click="rowMod">编辑</el-button>
                     <el-button size="mini" @click="rowDel">删除</el-button>
+                    <div class="recom fl">
+                        <div class="status fl" :class="{ active: rowData.recom }"></div>
+                        <a href="javascript:;" class="fl"
+                            @click="recomHandlePoint()">
+                            {{ rowData.recom ? '取消推荐' : '推荐'}}
+                        </a>
+                    </div>
                     <el-button size="mini" @click="rowAddChild">新增子条目/bit</el-button>
                     <el-button size="mini"><router-link :to="{ name: 'Index' }">首页</router-link></el-button>
                     <el-button size="mini">
@@ -17,18 +24,25 @@
             <dd>
                 <template v-for="(bit, index2) in listData">
                     <section class="nb-btns" :key="index2">
-                        <div v-if="bit.title" v-text="bit.title"></div>
-                        <div v-if="!bit.title" v-html="bit.content"></div>
+                        <div v-if="bit.isShowObj.title" v-text="bit.title"></div>
+                        <div v-html="bit.content"></div>
                         <div class="btns">
                             <el-button size="mini" @click="listMod(index2)">编辑</el-button>
                             <el-button size="mini" @click="listDel(index2)">删除</el-button>
+                            <div class="recom fl">
+                                <div class="status fl" :class="{ active: bit.recom }"></div>
+                                <a href="javascript:;" class="fl"
+                                    @click="recomHandleBit(index2)">
+                                    {{ bit.recom ? '取消推荐' : '推荐'}}
+                                </a>
+                            </div>
                             <el-button size="mini" @click="unbind(index2)">解绑</el-button>
                             <el-button size="mini" @click="sortFirst(index2)">前置</el-button>
                             <el-button size="mini" @click="sortLast(index2)">后置</el-button>
                             <!--catalog-tree-->
                             <catalog-tree
                                 class="fr"
-                                v-if="catalogTreeVisible"
+                                :visible="catalogTreeVisible"
                                 selectType="single"
                                 dimension="bit"
                                 @confirm="catalogTreeConfirm">
@@ -81,11 +95,13 @@
 
 <script>
 import DialogEdit from '../_components/dialog-edit';
+import { GetPlane, MapGetShowObj } from '../_methods';
 export default {
     name: 'nb-list-point',
     components: {
         DialogEdit
     },
+    inject: [ 'FieldSettingMode1' ],
     data () {
         return {
             rowData: {},
@@ -108,7 +124,6 @@ export default {
         getData () {
             this.$api.Point.row(this.$route.query.pid).then(res => {
                 this.rowData = res;
-                this.rowData.line = res.line.id;
                 this.getSubList();
             });
         },
@@ -118,10 +133,15 @@ export default {
             };
             this.$api.Bit.list(params).then(res => {
                 this.listData = res;
+                let setting = this.rowData.subFieldSetting;
+                if (setting[0] && setting[0].key === undefined) { // 如果是字符串就转成对象
+                    this.rowData.subFieldSetting = JSON.parse(setting);
+                }
                 this.listData.map((x, i) => {
-                    this.listData[i]['point'] = this.rowData.id;
+                    this.listData[i]['point'] = this.rowData;
                     this.listData[i]['visible'] = false;
                 });
+                this.listData = MapGetShowObj(this.listData, this.FieldSettingMode1);
             });
         },
         rowDel () {
@@ -143,11 +163,11 @@ export default {
         rowMod () {
             this.rowEditVisible = true;
         },
-        // 编辑完成后回调
+        // point 编辑完成后回调
         rowEditConfirm (params) {
             this.$api.Point.edit(params).then(() => {
                 this.$message.success('修改成功');
-                this.$set(this.rowData, 'title', params.title);
+                this.getData();
             });
         },
         // 增加子条目
@@ -186,7 +206,7 @@ export default {
             this.listEditAction = 'mod';
             this.listEditVisible = true;
         },
-        // 编辑完成后回调
+        // bit 编辑完成后回调
         listEditConfirm (params) {
             this.$api.Bit.edit(params).then(() => {
                 if (this.listEditAction === 'add') {
@@ -210,6 +230,32 @@ export default {
             this.listChildApi.edit(params).then(() => {
                 this.$message.success('新增子条目成功');
                 this.getSubList();
+            });
+        },
+        // point 推荐
+        recomHandlePoint () {
+            let params = {
+                id: this.rowData.id,
+                recom: !this.rowData.recom
+            };
+            this.$api.Point.edit(params).then(() => {
+                let note = !this.rowData.recom ? '推荐成功' : '取消推荐成功';
+                this.$message.success(note);
+                this.$set(this.rowData, 'recom', !this.rowData.recom);
+            });
+        },
+        // bit 推荐
+        recomHandleBit (index) {
+            this.currentIndex = index;
+            let item = this.listData[index];
+            let params = {
+                id: item.id,
+                recom: !item.recom
+            };
+            this.$api.Bit.edit(params).then(() => {
+                let note = !item.recom ? '推荐成功' : '取消推荐成功';
+                this.$message.success(note);
+                this.$set(item, 'recom', !item.recom);
             });
         },
         // 解绑
@@ -242,34 +288,15 @@ export default {
         // 点击分类下拉
         async catalogTreeClick (index) {
             if (this.$store.state.planes.length <= 0) {
-                let planes = await this.getPlane();
+                let planes = await GetPlane(this);
                 this.$store.commit('planes', planes);
             }
             this.catalogTreeVisible = true;
             this.currentIndex = index;
         },
-        // 下拉分类前先加载所有plane
-        getPlane () {
-            return new Promise(resolve => {
-                let params = {
-                    solid: this.$route.query.solid
-                };
-                this.$api.Plane.list(params).then(res => {
-                    let list = res;
-                    list.map(x => {
-                        x.top = true;
-                        if (this.dimension === 'line') {
-                            x.leaf = true;
-                        }
-                    });
-                    resolve(list);
-                });
-            });
-        },
         // 点选分类回调
         catalogTreeConfirm (catId) {
-            let params = {};
-            params = Object.assign(this.rowData.bits[this.currentIndex], { point: catId});
+            let params = Object.assign(this.listData[this.currentIndex], { point: catId});
             this.$api.Bit.edit(params).then(res => {
                 this.$message.success('转移成功');
                 this.catalogTreeVisible = false;
@@ -281,5 +308,27 @@ export default {
 </script>
 
 <style lang="scss">
-
+.nb-list-point {
+    .recom {
+        margin: 0 10px;
+        line-height: 22px;
+        background: #f8f8f8;
+        padding: 0 5px;
+        > a {
+            color: #666;
+            font-size: 12px;
+            font-weight: normal;
+        }
+    }
+    .status {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #ccc;
+        margin: 6px 5px 0 0;
+        &.active {
+            background: $--primary-color;
+        }
+    }
+}
 </style>

@@ -60,10 +60,10 @@ export class BitController {
         let query = request.body;
         let _where = '';
         if (query.sortPos === 'first') {
-            _where = `_filter.point = ${query.point} AND _filter.sort <= ${query.sort}`;
+            _where = `_filter.point = ${query.point.id} AND _filter.sort <= ${query.sort}`;
         }
         if (query.sortPos === 'last') {
-            _where = `_filter.point = ${query.point} AND _filter.sort >= ${query.sort}`;
+            _where = `_filter.point = ${query.point.id} AND _filter.sort >= ${query.sort}`;
         }
         let list = await this.repository
             .createQueryBuilder('_filter')

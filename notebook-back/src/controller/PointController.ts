@@ -23,7 +23,7 @@ export class PointController {
         } else {
             rs.updatedAt = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
         }
-        rs = Object.assign({ extend: ''}, request.body);
+        rs = Object.assign({ extend: '', subFieldSetting: '' }, request.body);
         return this.repository.save(rs);
     }
 

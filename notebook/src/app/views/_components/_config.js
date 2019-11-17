@@ -1,4 +1,4 @@
-import { AttrOpts } from '@configs/options';
+import { AttrOpts, LogClassOpts } from '@configs/options';
 
 /* ------- 编辑时表单控件配置 start ------- */
 
@@ -73,21 +73,53 @@ export const BitFieldConfig = [
     { key: 'content', label: '正文', defVal: '', formCtrl: { type: 'editor' } }
 ];
 
-// log-article
+// log
 export const LogArticleFieldConfig = [
-    { key: 'title', label: '标题', defVal: '', formCtrl: { type: 'text' } }
+    { key: 'title', label: '标题', defVal: '', formCtrl: { type: 'text' } },
+    { key: 'sort', label: '排序', defVal: 0, formCtrl: { type: 'text' } },
+    { 
+        key: 'topic',
+        label: '分类',
+        defVal: null,
+        formCtrl: {
+            type: 'select',
+            opts: []
+        }
+    },
+    { 
+        key: 'class',
+        label: '类别',
+        defVal: null,
+        formCtrl: {
+            type: 'select',
+            opts: LogClassOpts
+        }
+    },
+    { key: 'content', label: '内容', defVal: '', formCtrl: { type: 'editor' } },
 ];
 
 /* ------- 编辑时表单控件配置 end ------- */
 
-// bit 字段配置 默认值
-export const FieldConfigDefault = [
+/* --point 下属颗粒字段配置 默认值-- */
+// 模式一
+export const FieldSettingMode1 = [
+    { key: 'title', isAble: false, isShow: true },
+    { key: 'sort', isAble: true, isShow: true },
+    { key: 'attr', isAble: true, isShow: true },
+    { key: 'audio', isAble: false, isShow: true },
+    { key: 'video', isAble: false, isShow: true },
+    { key: 'description', isAble: false, isShow: true },
+    { key: 'content', isAble: true, isShow: true },
+    { key: 'extend', isAble: false, isShow: true }
+];
+// 模式二
+export const FieldSettingMode2 = [
     { key: 'title', isAble: true, isShow: true },
     { key: 'sort', isAble: true, isShow: true },
     { key: 'attr', isAble: true, isShow: true },
-    { key: 'audio', isAble: false, isShow: false },
-    { key: 'video', isAble: false, isShow: false },
-    { key: 'description', isAble: true, isShow: true },
+    { key: 'audio', isAble: false, isShow: true },
+    { key: 'video', isAble: false, isShow: true },
+    { key: 'description', isAble: false, isShow: true },
     { key: 'content', isAble: true, isShow: true },
-    { key: 'extend', isAble: false, isShow: false }
+    { key: 'extend', isAble: false, isShow: true }
 ];

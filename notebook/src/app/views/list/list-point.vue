@@ -7,6 +7,13 @@
                 <div class="btns">
                     <el-button size="mini" @click="rowMod">编辑</el-button>
                     <el-button size="mini" @click="rowDel">删除</el-button>
+                    <div class="recom fl">
+                        <div class="status fl" :class="{ active: rowData.recom }"></div>
+                        <a href="javascript:;" class="fl"
+                            @click="recomHandleLine()">
+                            {{ rowData.recom ? '取消推荐' : '推荐'}}
+                        </a>
+                    </div>
                     <el-button size="mini" @click="rowAddChild">新增子条目/point</el-button>
                     <el-button size="mini"><router-link :to="{ name: 'Index' }">首页</router-link></el-button>
                 </div>
@@ -81,7 +88,6 @@ export default {
         getData () {
             this.$api.Line.row(this.$route.query.pid).then(res => {
                 this.rowData = res;
-                this.rowData.plane = res.plane.id;
                 this.getSubList();
             });
         },
@@ -90,7 +96,7 @@ export default {
             this.$api.Point.list(params).then(res => {
                 this.listData = res;
                 this.listData.map((x, i) => {
-                    this.listData[i]['line'] = this.rowData.id;
+                    this.listData[i]['line'] = this.rowData;
                 });
             });
         },
@@ -145,6 +151,18 @@ export default {
                     this.listData.splice(index, 1);
                 });
             }).catch(() => {});
+        },
+        // line 推荐
+        recomHandleLine () {
+            let params = {
+                id: this.rowData.id,
+                recom: !this.rowData.recom
+            };
+            this.$api.Line.edit(params).then(() => {
+                let note = !this.rowData.recom ? '推荐成功' : '取消推荐成功';
+                this.$message.success(note);
+                this.$set(this.rowData, 'recom', !this.rowData.recom);
+            });
         },
         // 前置
         sortFirst (index) {

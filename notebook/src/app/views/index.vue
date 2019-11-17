@@ -41,8 +41,8 @@
             </router-link>
         </ol>
         <ol class="layout2">
-            <router-link :to="{name: 'FastEnter' }">
-                快捷入口
+            <router-link :to="{name: 'RecomPage' }">
+                推荐
             </router-link>
             <router-link :to="{name: 'LocalSource' }">
                 本地资源

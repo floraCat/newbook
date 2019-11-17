@@ -6,6 +6,7 @@
                 <div class="btns">
                     <el-button size="mini" @click="rowMod">编辑</el-button>
                     <el-button size="mini" @click="rowDel">删除</el-button>
+                    <el-button size="mini" @click="rowDel"><router-link :to="{ name: 'Index' }">首页</router-link></el-button>
                 </div>
             </dt>
             <div class="content">
@@ -18,7 +19,7 @@
             v-if="rowEditVisible"
             :visible="rowEditVisible"
             action="mod"
-            dataKey="log-article"
+            dataKey="log"
             :data="rowData"
             @close="rowEditVisible = false"
             @confirm="rowEditConfirm"
@@ -73,7 +74,7 @@ export default {
         rowEditConfirm (params) {
             this.$api.LogArticle.edit(params).then(() => {
                 this.$message.success('修改成功');
-                this.$set(this.rowData, 'title', params.title);
+                this.getData();
             });
         }
     }

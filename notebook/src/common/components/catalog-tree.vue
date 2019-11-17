@@ -12,12 +12,16 @@
             width="400"
             node-key="id"
             trigger="click">
+            <div class="catalog-tree-ctrl-input">
+                <el-input size="mini" v-model="catId" placeholder="可输入分类id转移" />
+                <el-button size="mini" @click="confirmInput">确定</el-button>
+            </div>
             <el-checkbox v-if="selectType === 'multi'" v-model="isNull">空</el-checkbox>
             <el-tree
                 v-if="visible"
                 class="catalog-tree-ctrl"
                 ref="tree"
-                :props="props"
+                :props="treeProps"
                 :load="loadNode"
                 lazy
                 @node-click="nodeClickHandle"
@@ -34,7 +38,8 @@ export default {
     props: [ 'dimension', 'selectType', 'visible' ], // selectType: single | multi (单选or多选)
     data() {
         return {
-            props: {
+            catId: null,
+            treeProps: {
                 label: 'title',
                 children: 'zones',
                 isLeaf: 'leaf'
@@ -48,6 +53,7 @@ export default {
         }
     },
     methods: {
+        // 每点击一级加载其下一级所有条目
         async loadNode(node, resolve) {
             if (node.level === 0) {
                 return resolve(this.planes);
@@ -87,15 +93,16 @@ export default {
                 });
             });
         },
+        // 单选时点击最后一级即返回结果
         nodeClickHandle (data) {
             if (this.selectType === 'single') {
                 if (data.leaf) {
                     this.$refs.popover.doClose();
-                    this.$emit('confirm', data.id);
+                    this.$emit('confirm', data);
                 }
             }
         },
-        // 获取被选的分类id
+        // 获取被选的分类id（用于多选）
         getSelectedCats () {
             let checkedNodes = this.$refs.tree.getCheckedNodes();
 
@@ -114,6 +121,16 @@ export default {
                 points: points.map(x => x.id)
             };
         },
+        // 点击 input 后的确定
+        confirmInput () {
+            if (this.catId !== null || this.catId !== '') {
+                this.$refs.popover.doClose();
+                this.$emit('confirm', this.catId);
+            } else {
+                this.$message.warning('还没有填写要转移的分类id');
+            }
+        },
+        // 多选 确定
         confirm () {
             let selectedCats = this.getSelectedCats();
             this.$refs.popover.doClose();
@@ -130,5 +147,16 @@ export default {
     margin-bottom: 10px;
     overflow-y: scroll;
     background: #f2f2f2;
+    &-input {
+        overflow: hidden;
+        margin-bottom: 10px;
+        .el-input {
+            float: left;
+            width: 300px;
+        }
+        .el-button {
+            float: right;
+        }
+    }
 }
 </style>

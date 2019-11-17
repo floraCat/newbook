@@ -178,9 +178,9 @@ export default {
                 this.$message.success('后置成功');
                 this.getSubList(index);
             });
-        },
+        }
     }
-}
+};
 </script>
 
 <style lang="scss">

@@ -18,7 +18,7 @@ import FilterList from '@/app/views/filter/list.vue';
 import LogList from '@/app/views/log/log-list.vue';
 import LogArticle from '@/app/views/log/log-article.vue';
 
-import FastEnter from '@/app/views/static-page/fast-enter.vue';
+import RecomPage from '@/app/views/static-page/recom-page.vue';
 import LocalSource from '@/app/views/static-page/local-source.vue';
 
 Vue.use(Router);
@@ -41,7 +41,7 @@ export default new Router({
         { path: '/log/list', name: 'LogList', component: LogList },
         { path: '/log/article', name: 'LogArticle', component: LogArticle },
 
-        { path: '/fast-enter', name: 'FastEnter', component: FastEnter },
+        { path: '/recom-page', name: 'RecomPage', component: RecomPage },
         { path: '/local-source', name: 'LocalSource', component: LocalSource },
 
         { path: '**', redirect: '/' }

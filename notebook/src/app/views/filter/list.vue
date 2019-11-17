@@ -1,9 +1,5 @@
 <template>
     <div class="nb-filter-list">
-        <list-page
-            :params="params"
-            v-if="showType === 'list'">
-        </list-page>
         <list-slider
             :params="params"
             v-if="showType === 'slider'">
@@ -17,18 +13,20 @@
 
 <script>
 import { FilterDefaultVals } from '@configs/options';
-import ListPage from './list-page';
+// import ListPage from './list-page';
 import ListSlider from './list-slider';
 import ListGridLayout from './list-grid-layout';
 export default {
     name: 'nb-filter-list',
     components: {
-        ListPage,
+        // ListPage,
         ListSlider,
         ListGridLayout
     },
     data () {
         return {};
+    },
+    mounted () {
     },
     computed: {
         showType () {

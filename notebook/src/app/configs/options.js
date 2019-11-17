@@ -11,13 +11,16 @@ export const AttrOpts = [
     { label: '垃圾桶', value: 8 }
 ];
 
-// 其他下拉选项
+// 其他下拉选项(filter页)
 export const DropdownOpts = {
-    Fields: [
-        { label: '正文', value: 'content' }
+    Fields: [],
+    FieldsLog: [
+        { label: '正文', value: 'content' },
+        { label: '标题', value: 'title' }
     ],
     FieldsBit: [
-        { label: '正文', value: 'content' }
+        { label: '正文', value: 'content' },
+        { label: '标题', value: 'title' }
     ],
     FieldsPoint: [
         { label: '标题', value: 'title' }
@@ -54,6 +57,14 @@ export const FilterDefaultVals = {
     updatedAt: null,
     createdAt: null
 };
+
+// 日志的类别选项(只针对随笔)
+export const LogClassOpts = [
+    { label: '随笔', value: 0 },
+    { label: '读书笔记', value: 1 },
+    { label: '写作素材', value: 2 },
+    { label: '写作练习', value: 3 }
+];
 
 /*------------------------grade 暂存，以后可配置 start-------------*/
 /*
